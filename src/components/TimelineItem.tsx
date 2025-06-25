@@ -14,13 +14,20 @@ interface TimelineItemProps {
   index: number;
   isVisible: boolean;
   isLeft: boolean;
+  onExpand: (id: number) => void;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isLeft }) => {
+const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isLeft, onExpand }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    if (!isOpen) {
+      // First click: open the folder
+      setIsOpen(true);
+    } else {
+      // Second click: expand to full page
+      onExpand(item.id);
+    }
   };
 
   return (
@@ -77,7 +84,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
                 {item.description}
               </p>
               <div className="mt-4 text-sm text-gray-500">
-                Apasă din nou pentru a închide
+                Apasă din nou pentru a vedea colecția de fotografii
               </div>
             </div>
           </div>
