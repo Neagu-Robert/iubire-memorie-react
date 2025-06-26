@@ -23,10 +23,10 @@ const Index = () => {
     },
     {
       id: 2,
-      title: "Folder 2",
-      description: "Description for second folder",
+      title: "Evenimente speciale",
+      description: "Sărbători și momente de neuitat din viața noastră",
       color: "from-blue-400 to-cyan-500",
-      route: "/folder2",
+      route: "/evenimente-speciale",
       position: "center-left" as const
     },
     {
