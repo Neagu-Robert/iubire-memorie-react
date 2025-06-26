@@ -13,7 +13,7 @@ const Hero = () => {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center text-white">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center text-white bg-[#d71b3d]/[0.99]">
         <div className={`transition-all duration-2000 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight">
             <span className="block mb-2">La mulți ani,</span>
