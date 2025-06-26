@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { ArrowDown } from 'lucide-react';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -8,16 +7,6 @@ const Hero = () => {
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  const scrollToTimeline = () => {
-    const timelineElement = document.getElementById('timeline');
-    if (timelineElement) {
-      timelineElement.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
 
   return (
     <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-purple-400 via-purple-500 to-violet-600">
@@ -47,22 +36,6 @@ const Hero = () => {
               Am creat un mic traseu cu amintirile noastre
             </p>
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-2000 delay-1000 ease-out ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-        }`}>
-          <button 
-            onClick={scrollToTimeline}
-            className="group flex flex-col items-center space-y-2 text-white/80 hover:text-white transition-colors duration-300"
-            aria-label="Scroll to timeline"
-          >
-            <span className="text-sm font-medium">Descoperă povestea noastră</span>
-            <div className="p-2 rounded-full border border-white/30 group-hover:border-white/60 transition-colors duration-300">
-              <ArrowDown className="w-5 h-5 animate-bounce" />
-            </div>
-          </button>
         </div>
       </div>
 
