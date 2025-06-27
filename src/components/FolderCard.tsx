@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Folder } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +30,7 @@ const FolderCard: React.FC<FolderCardProps> = ({ title, description, color, rout
   };
 
   const handleClick = () => {
-    navigate(route);
+    navigate(route, { state: { fromFolder: true } });
   };
 
   return (

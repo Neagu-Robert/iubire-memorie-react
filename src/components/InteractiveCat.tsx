@@ -1,30 +1,22 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 
 const InteractiveCat = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isSwatting, setIsSwatting] = useState(false);
-  const [swatDirection, setSwatDirection] = useState<'left' | 'right'>('left');
-  const cursorRef = useRef<HTMLImageElement>(null);
+  const [swatAngle, setSwatAngle] = useState(0); // angle in degrees
+  const [swatPhase, setSwatPhase] = useState(0); // 0: rest, 1: slap, 2: return
+  const swatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pawRef = useRef<SVGGElement>(null);
   const leftPupilRef = useRef<SVGCircleElement>(null);
   const rightPupilRef = useRef<SVGCircleElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const [isLoveCatHovered, setIsLoveCatHovered] = useState(false);
+  const loveCatVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
-      
-      // Update cursor position
-      if (cursorRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`;
-        cursorRef.current.style.top = `${e.clientY}px`;
-      }
-
-      // Update eye pupils to follow cursor
       updatePupilPositions(e.clientX, e.clientY);
-
-      // Check if cursor is close to the paw area and trigger swatting
       checkPawProximity(e.clientX, e.clientY);
     };
 
@@ -72,25 +64,28 @@ const InteractiveCat = () => {
     };
 
     const checkPawProximity = (mouseX: number, mouseY: number) => {
-      if (pawRef.current) {
+      if (pawRef.current && svgRef.current) {
         const pawRect = pawRef.current.getBoundingClientRect();
+        const svgRect = svgRef.current.getBoundingClientRect();
         const pawCenterX = pawRect.left + pawRect.width / 2;
         const pawCenterY = pawRect.top + pawRect.height / 2;
-        
-        // Calculate distance from cursor to paw center
         const distance = Math.sqrt(
           Math.pow(mouseX - pawCenterX, 2) + Math.pow(mouseY - pawCenterY, 2)
         );
-        
-        // If cursor is within 100px of the paw, start swatting
         if (distance < 100) {
-          if (!isSwatting) {
-            setIsSwatting(true);
-            // Alternate swat direction
-            setSwatDirection(prev => prev === 'left' ? 'right' : 'left');
-          }
+          // Calculate angle from paw to cursor (in SVG coordinates)
+          const svgPawX = ((pawCenterX - svgRect.left) / svgRect.width) * 200;
+          const svgPawY = ((pawCenterY - svgRect.top) / svgRect.height) * 200;
+          const svgMouseX = ((mouseX - svgRect.left) / svgRect.width) * 200;
+          const svgMouseY = ((mouseY - svgRect.top) / svgRect.height) * 200;
+          const dx = svgMouseX - svgPawX;
+          const dy = svgMouseY - svgPawY;
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI); // degrees
+          setSwatAngle(angle);
+          if (!isSwatting) setIsSwatting(true);
         } else {
           setIsSwatting(false);
+          setSwatAngle(0); // Reset paw to default position
         }
       }
     };
@@ -102,55 +97,42 @@ const InteractiveCat = () => {
     };
   }, [isSwatting]);
 
+  // Swatting animation effect
+  useEffect(() => {
+    if (isSwatting) {
+      if (!swatIntervalRef.current) {
+        setSwatPhase(0);
+        swatIntervalRef.current = setInterval(() => {
+          setSwatPhase(prev => (prev === 0 ? 1 : 0));
+        }, 100); // 100ms per slap (faster)
+      }
+    } else {
+      if (swatIntervalRef.current) {
+        clearInterval(swatIntervalRef.current);
+        swatIntervalRef.current = null;
+        setSwatPhase(0);
+      }
+    }
+    return () => {
+      if (swatIntervalRef.current) {
+        clearInterval(swatIntervalRef.current);
+        swatIntervalRef.current = null;
+      }
+    };
+  }, [isSwatting]);
+
   return (
     <>
-      {/* Global cursor hide and font import */}
+      {/* Remove global cursor hide and custom cursor */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
-        * {
-          cursor: none !important;
-        }
-        
-        @keyframes swat-left {
-          0% { transform: rotate(0deg); }
-          50% { transform: rotate(-90deg); }
-          100% { transform: rotate(0deg); }
-        }
-        
-        @keyframes swat-right {
-          0% { transform: rotate(0deg); }
-          50% { transform: rotate(90deg); }
-          100% { transform: rotate(0deg); }
-        }
-        
+        /* Removed: * { cursor: none !important; } */
         @keyframes swatted {
           0% { transform: scale(1) rotate(0deg); }
           50% { transform: scale(1.2) rotate(5deg); }
           100% { transform: scale(1) rotate(0deg); }
         }
-        
-        .swat-left {
-          animation: swat-left 0.5s ease-out;
-        }
-        
-        .swat-right {
-          animation: swat-right 0.5s ease-out;
-        }
-        
-        .swatted {
-          animation: swatted 0.3s ease-out;
-        }
       `}</style>
-
-      {/* Custom cursor */}
-      <img
-        ref={cursorRef}
-        id="cursor"
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgM0wyMSAyMUwxMyAxN0w5IDEzTDMgM1oiIGZpbGw9ImJsYWNrIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+"
-        alt="cursor"
-        className={`fixed w-6 h-6 pointer-events-none z-50 transition-all duration-100 ${isSwatting ? 'swatted' : ''}`}
-        style={{ transform: 'translate(-2px, -2px)' }}
-      />
 
       {/* Cat container - smaller and positioned higher */}
       <div className="flex justify-center">
@@ -159,16 +141,16 @@ const InteractiveCat = () => {
             {/* Cat body */}
             <ellipse cx="100" cy="130" rx="60" ry="50" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
             
+            {/* Cat ears - moved slightly lower (down by 1 pixel) and rendered behind the head */}
+            <polygon points="65,41 80,6 95,41" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
+            <polygon points="135,41 120,6 105,41" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
+            
+            {/* Inner ears - matching new ear positions */}
+            <polygon points="77,41 80,14 88,41" fill="#ffcccc" />
+            <polygon points="123,41 120,14 112,41" fill="#ffcccc" />
+            
             {/* Cat head */}
             <circle cx="100" cy="80" r="50" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
-            
-            {/* Cat ears - positioned on the head */}
-            <polygon points="70,35 85,55 55,55" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
-            <polygon points="145,35 160,55 130,55" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
-            
-            {/* Inner ears */}
-            <polygon points="73,42 80,52 66,52" fill="#ffcccc" />
-            <polygon points="142,42 149,52 135,52" fill="#ffcccc" />
             
             {/* Left eye */}
             <circle cx="85" cy="75" r="12" fill="white" stroke="#333" strokeWidth="1" />
@@ -195,14 +177,11 @@ const InteractiveCat = () => {
             <g
               ref={pawRef}
               id="Paw"
-              className={`transition-transform duration-300 ${
-                isSwatting 
-                  ? swatDirection === 'left' 
-                    ? 'swat-left' 
-                    : 'swat-right'
-                  : ''
-              }`}
-              style={{ transformOrigin: '160px 120px' }}
+              className={"transition-transform duration-100"}
+              style={{
+                transformOrigin: '160px 120px',
+                transform: `rotate(${isSwatting ? (swatPhase === 1 ? swatAngle + 60 : swatAngle) : 0}deg)`
+              }}
             >
               <ellipse cx="160" cy="120" rx="15" ry="25" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
               <circle cx="155" cy="110" r="4" fill="#ff6666" />
@@ -216,6 +195,39 @@ const InteractiveCat = () => {
             </g>
           </svg>
         </div>
+      </div>
+      {/* Love Cat Animation - Bottom Left */}
+      <div
+        style={{ position: 'fixed', left: 0, bottom: 0, zIndex: 40 }}
+        onMouseEnter={() => {
+          setIsLoveCatHovered(true);
+          if (loveCatVideoRef.current) {
+            loveCatVideoRef.current.currentTime = 0;
+            loveCatVideoRef.current.play();
+          }
+        }}
+        onMouseLeave={() => {
+          setIsLoveCatHovered(false);
+          if (loveCatVideoRef.current) {
+            loveCatVideoRef.current.pause();
+            loveCatVideoRef.current.currentTime = 0;
+          }
+        }}
+      >
+        <video
+          ref={loveCatVideoRef}
+          src="/animations/love_cat.webm"
+          width={180}
+          height={180}
+          loop
+          muted
+          style={{
+            filter: isLoveCatHovered ? 'none' : 'grayscale(80%)',
+            opacity: isLoveCatHovered ? 1 : 0.5,
+            display: 'block',
+            transition: 'filter 0.2s, opacity 0.2s'
+          }}
+        />
       </div>
     </>
   );

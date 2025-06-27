@@ -1,5 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 import TimelineItem from './TimelineItem';
 
 const timelineData = [
@@ -128,6 +129,7 @@ const timelineData = [
 const Timeline = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -159,16 +161,26 @@ const Timeline = () => {
   return (
     <section id="timeline" className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Povestea noastră de dragoste
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Fiecare moment contează, fiecare amintire este prețioasă
-          </p>
-          <div className="text-lg text-gray-700 italic">
-            Am numit următoarea colecție "primul/prima". Și nu, nu este o competiție 😉
+        {/* Header with close button */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex-1">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+              Povestea noastră de dragoste
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+              Fiecare moment contează, fiecare amintire este prețioasă
+            </p>
+            <div className="text-lg text-gray-700 italic">
+              Am numit următoarea colecție "primul/prima". Și nu, nu este o competiție 😉
+            </div>
           </div>
+          <button
+            onClick={() => navigate('/', { state: { fromFolder: true } })}
+            className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-gray-50"
+            aria-label="Înapoi la pagina principală"
+          >
+            <X className="w-6 h-6 text-gray-600" />
+          </button>
         </div>
 
         <div className="relative">

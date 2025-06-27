@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Folder } from 'lucide-react';
+import { Folder, X } from 'lucide-react';
 
 interface TimelineItemProps {
   item: {
@@ -46,7 +45,22 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
       </div>
 
       {/* Content */}
-      <div className={`w-full max-w-md ${isLeft ? 'pr-8' : 'pl-8'}`}>
+      <div className={`w-full max-w-md ${isLeft ? 'pr-8' : 'pl-8'}`}
+        style={{ position: 'relative' }}
+      >
+        {/* X button always on top when open */}
+        {isOpen && (
+          <button
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 z-20"
+            onClick={e => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
+            aria-label="Închide folderul"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
         <div
           className={`group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden ${
             isOpen ? 'shadow-2xl' : ''
@@ -79,7 +93,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
             isOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
           }`}>
-            <div className="p-6 bg-white">
+            <div className="p-6 bg-white relative">
               <p className="text-gray-700 leading-relaxed">
                 {item.description}
               </p>
