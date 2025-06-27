@@ -6,6 +6,9 @@ const InteractiveCat = () => {
   const [isSwatting, setIsSwatting] = useState(false);
   const cursorRef = useRef<HTMLImageElement>(null);
   const pawRef = useRef<SVGGElement>(null);
+  const leftPupilRef = useRef<SVGCircleElement>(null);
+  const rightPupilRef = useRef<SVGCircleElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -17,8 +20,54 @@ const InteractiveCat = () => {
         cursorRef.current.style.top = `${e.clientY}px`;
       }
 
+      // Update eye pupils to follow cursor
+      updatePupilPositions(e.clientX, e.clientY);
+
       // Check if cursor is close to the paw area and trigger swatting
       checkPawProximity(e.clientX, e.clientY);
+    };
+
+    const updatePupilPositions = (mouseX: number, mouseY: number) => {
+      if (leftPupilRef.current && rightPupilRef.current && svgRef.current) {
+        const svgRect = svgRef.current.getBoundingClientRect();
+        
+        // Convert mouse position to SVG coordinate system
+        const svgMouseX = ((mouseX - svgRect.left) / svgRect.width) * 200;
+        const svgMouseY = ((mouseY - svgRect.top) / svgRect.height) * 200;
+        
+        // Left eye center (85, 75) with radius constraint of 6 (pupil can move 6px from center)
+        const leftEyeCenterX = 85;
+        const leftEyeCenterY = 75;
+        const maxDistance = 6;
+        
+        let leftDx = svgMouseX - leftEyeCenterX;
+        let leftDy = svgMouseY - leftEyeCenterY;
+        const leftDistance = Math.sqrt(leftDx * leftDx + leftDy * leftDy);
+        
+        if (leftDistance > maxDistance) {
+          leftDx = (leftDx / leftDistance) * maxDistance;
+          leftDy = (leftDy / leftDistance) * maxDistance;
+        }
+        
+        leftPupilRef.current.setAttribute('cx', (leftEyeCenterX + leftDx).toString());
+        leftPupilRef.current.setAttribute('cy', (leftEyeCenterY + leftDy).toString());
+        
+        // Right eye center (115, 75) with same radius constraint
+        const rightEyeCenterX = 115;
+        const rightEyeCenterY = 75;
+        
+        let rightDx = svgMouseX - rightEyeCenterX;
+        let rightDy = svgMouseY - rightEyeCenterY;
+        const rightDistance = Math.sqrt(rightDx * rightDx + rightDy * rightDy);
+        
+        if (rightDistance > maxDistance) {
+          rightDx = (rightDx / rightDistance) * maxDistance;
+          rightDy = (rightDy / rightDistance) * maxDistance;
+        }
+        
+        rightPupilRef.current.setAttribute('cx', (rightEyeCenterX + rightDx).toString());
+        rightPupilRef.current.setAttribute('cy', (rightEyeCenterY + rightDy).toString());
+      }
     };
 
     const checkPawProximity = (mouseX: number, mouseY: number) => {
@@ -120,28 +169,28 @@ const InteractiveCat = () => {
 
         {/* Cat SVG */}
         <div className="relative">
-          <svg width="200" height="200" viewBox="0 0 200 200" className="relative">
+          <svg ref={svgRef} width="200" height="200" viewBox="0 0 200 200" className="relative">
             {/* Cat body */}
             <ellipse cx="100" cy="130" rx="60" ry="50" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
             
             {/* Cat head */}
             <circle cx="100" cy="80" r="50" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
             
-            {/* Cat ears */}
-            <polygon points="70,40 85,70 55,70" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
-            <polygon points="130,40 145,70 115,70" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
+            {/* Cat ears - positioned on the head, not overlapping face */}
+            <polygon points="65,45 80,65 50,65" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
+            <polygon points="135,45 150,65 120,65" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
             
             {/* Inner ears */}
-            <polygon points="73,50 80,65 66,65" fill="#ffcccc" />
-            <polygon points="127,50 134,65 120,65" fill="#ffcccc" />
+            <polygon points="68,52 75,62 61,62" fill="#ffcccc" />
+            <polygon points="132,52 139,62 125,62" fill="#ffcccc" />
             
             {/* Left eye */}
             <circle cx="85" cy="75" r="12" fill="white" stroke="#333" strokeWidth="1" />
-            <circle cx="85" cy="75" r="6" fill="black" />
+            <circle ref={leftPupilRef} cx="85" cy="75" r="6" fill="black" />
             
             {/* Right eye */}
             <circle cx="115" cy="75" r="12" fill="white" stroke="#333" strokeWidth="1" />
-            <circle cx="115" cy="75" r="6" fill="black" />
+            <circle ref={rightPupilRef} cx="115" cy="75" r="6" fill="black" />
             
             {/* Nose */}
             <polygon points="100,85 95,95 105,95" fill="#ff6666" />
