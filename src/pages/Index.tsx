@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import FolderCard from '../components/FolderCard';
-import AnimatedCat from '../components/AnimatedCat';
+import InteractiveCat from '../components/InteractiveCat';
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -52,7 +52,7 @@ const Index = () => {
       <Hero />
       
       {/* New folders section */}
-      <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 flex flex-col items-center justify-center">
+      <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 flex flex-col items-center justify-center relative">
         <div className="max-w-6xl mx-auto px-4 text-center">
           
           {/* Folders arranged in an arch */}
@@ -69,8 +69,8 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Animated cat below the folders */}
-          <AnimatedCat />
+          {/* Interactive cat below the folders */}
+          <InteractiveCat />
           
           <div className="text-center">
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
