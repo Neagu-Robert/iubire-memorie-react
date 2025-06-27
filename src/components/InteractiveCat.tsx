@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 const InteractiveCat = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isSwatting, setIsSwatting] = useState(false);
+  const [swatDirection, setSwatDirection] = useState<'left' | 'right'>('left');
   const cursorRef = useRef<HTMLImageElement>(null);
   const pawRef = useRef<SVGGElement>(null);
   const leftPupilRef = useRef<SVGCircleElement>(null);
@@ -83,7 +84,11 @@ const InteractiveCat = () => {
         
         // If cursor is within 100px of the paw, start swatting
         if (distance < 100) {
-          setIsSwatting(true);
+          if (!isSwatting) {
+            setIsSwatting(true);
+            // Alternate swat direction
+            setSwatDirection(prev => prev === 'left' ? 'right' : 'left');
+          }
         } else {
           setIsSwatting(false);
         }
@@ -95,10 +100,11 @@ const InteractiveCat = () => {
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, [isSwatting]);
 
   const handleButtonHover = () => {
     setIsSwatting(true);
+    setSwatDirection(prev => prev === 'left' ? 'right' : 'left');
   };
 
   const handleButtonLeave = () => {
@@ -114,10 +120,16 @@ const InteractiveCat = () => {
           cursor: none !important;
         }
         
-        @keyframes swat {
-          0% { transform: rotate(0deg) scale(1); }
-          50% { transform: rotate(-20deg) scale(1.1); }
-          100% { transform: rotate(0deg) scale(1); }
+        @keyframes swat-left {
+          0% { transform: rotate(0deg); }
+          50% { transform: rotate(-90deg); }
+          100% { transform: rotate(0deg); }
+        }
+        
+        @keyframes swat-right {
+          0% { transform: rotate(0deg); }
+          50% { transform: rotate(90deg); }
+          100% { transform: rotate(0deg); }
         }
         
         @keyframes swatted {
@@ -126,17 +138,18 @@ const InteractiveCat = () => {
           100% { transform: scale(1) rotate(0deg); }
         }
         
-        .swat {
-          animation: swat 0.3s ease-out;
+        .swat-left {
+          animation: swat-left 0.5s ease-out;
+        }
+        
+        .swat-right {
+          animation: swat-right 0.5s ease-out;
         }
         
         .swatted {
           animation: swatted 0.3s ease-out;
         }
       `}</style>
-
-      {/* Full page tracker */}
-      <div id="tracker" className="fixed inset-0 z-10 pointer-events-none" />
 
       {/* Custom cursor */}
       <img
@@ -209,7 +222,13 @@ const InteractiveCat = () => {
             <g
               ref={pawRef}
               id="Paw"
-              className={`origin-center transition-transform duration-300 ${isSwatting ? 'swat' : ''}`}
+              className={`transition-transform duration-300 ${
+                isSwatting 
+                  ? swatDirection === 'left' 
+                    ? 'swat-left' 
+                    : 'swat-right'
+                  : ''
+              }`}
               style={{ transformOrigin: '160px 120px' }}
             >
               <ellipse cx="160" cy="120" rx="15" ry="25" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
