@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 
 const InteractiveCat = () => {
@@ -8,7 +7,7 @@ const InteractiveCat = () => {
   const cursorRef = useRef<HTMLImageElement>(null);
   const leftPupilRef = useRef<HTMLDivElement>(null);
   const rightPupilRef = useRef<HTMLDivElement>(null);
-  const pawRef = useRef<HTMLDivElement>(null);
+  const pawRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
