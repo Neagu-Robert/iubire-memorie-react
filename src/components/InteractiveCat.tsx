@@ -102,15 +102,6 @@ const InteractiveCat = () => {
     };
   }, [isSwatting]);
 
-  const handleButtonHover = () => {
-    setIsSwatting(true);
-    setSwatDirection(prev => prev === 'left' ? 'right' : 'left');
-  };
-
-  const handleButtonLeave = () => {
-    setIsSwatting(false);
-  };
-
   return (
     <>
       {/* Global cursor hide and font import */}
@@ -161,27 +152,9 @@ const InteractiveCat = () => {
         style={{ transform: 'translate(-2px, -2px)' }}
       />
 
-      {/* Text prompts */}
-      <div id="text" className="text-center mb-8" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
-        <p className="text-2xl text-purple-600 mb-2">Move your mouse around!</p>
-        <p className="text-lg text-purple-500">Watch the kitty try to catch your cursor 🐾</p>
-      </div>
-
-      {/* Main cat section */}
-      <main className="flex flex-col items-center justify-center" style={{ backgroundColor: '#feeeed', borderRadius: '20px', padding: '40px' }}>
-        {/* Stop playing button */}
-        <button
-          id="target"
-          className="mb-8 px-6 py-3 bg-purple-500 text-white rounded-full text-lg font-semibold hover:bg-purple-600 transition-colors pointer-events-auto"
-          style={{ fontFamily: 'Luckiest Guy, cursive' }}
-          onMouseEnter={handleButtonHover}
-          onMouseLeave={handleButtonLeave}
-        >
-          Stop playing
-        </button>
-
-        {/* Cat SVG */}
-        <div className="relative">
+      {/* Cat container - smaller and positioned higher */}
+      <div className="flex justify-center">
+        <div className="relative" style={{ backgroundColor: '#feeeed', borderRadius: '15px', padding: '20px' }}>
           <svg ref={svgRef} width="200" height="200" viewBox="0 0 200 200" className="relative">
             {/* Cat body */}
             <ellipse cx="100" cy="130" rx="60" ry="50" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
@@ -189,13 +162,13 @@ const InteractiveCat = () => {
             {/* Cat head */}
             <circle cx="100" cy="80" r="50" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
             
-            {/* Cat ears - positioned on the head, not overlapping face */}
-            <polygon points="65,45 80,65 50,65" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
-            <polygon points="135,45 150,65 120,65" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
+            {/* Cat ears - positioned on the head */}
+            <polygon points="70,35 85,55 55,55" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
+            <polygon points="145,35 160,55 130,55" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
             
             {/* Inner ears */}
-            <polygon points="68,52 75,62 61,62" fill="#ffcccc" />
-            <polygon points="132,52 139,62 125,62" fill="#ffcccc" />
+            <polygon points="73,42 80,52 66,52" fill="#ffcccc" />
+            <polygon points="142,42 149,52 135,52" fill="#ffcccc" />
             
             {/* Left eye */}
             <circle cx="85" cy="75" r="12" fill="white" stroke="#333" strokeWidth="1" />
@@ -243,7 +216,7 @@ const InteractiveCat = () => {
             </g>
           </svg>
         </div>
-      </main>
+      </div>
     </>
   );
 };
