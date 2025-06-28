@@ -71,6 +71,8 @@ const events: Event[] = [
 const CircularGallery = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentEvent, setCurrentEvent] = useState(events[0]);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isEnlarged, setIsEnlarged] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -104,13 +106,27 @@ const CircularGallery = () => {
     navigate('/', { state: { fromFolder: true } });
   };
 
-  // Handle mouse wheel scrolling
+  const handleCenterImageClick = () => {
+    setIsEnlarged(true);
+  };
+
+  const handleEnlargedImageClick = (e: React.MouseEvent) => {
+    // Close if clicking outside the image
+    if (e.target === e.currentTarget) {
+      setIsEnlarged(false);
+    }
+  };
+
+  // Handle mouse wheel scrolling only when hovering over pictures
   const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    if (e.deltaY > 0) {
-      goToNext();
-    } else {
-      goToPrevious();
+    if (isHovering) {
+      e.preventDefault();
+      // Reversed directions: positive deltaY goes previous, negative goes next
+      if (e.deltaY > 0) {
+        goToPrevious();
+      } else {
+        goToNext();
+      }
     }
   };
 
@@ -179,17 +195,23 @@ const CircularGallery = () => {
           className="relative w-full h-[500px] overflow-hidden cursor-grab active:cursor-grabbing"
           ref={containerRef}
           onWheel={handleWheel}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
         >
           {images.map((image, index) => {
             const style = getImageStyle(index);
             if (style.display === 'none') return null;
             
+            const isCenter = index === currentImageIndex;
+            
             return (
               <div
                 key={image.id}
-                className="w-48 h-64 rounded-lg overflow-hidden shadow-lg border-4 border-white cursor-pointer hover:border-purple-300"
+                className={`w-48 h-64 rounded-lg overflow-hidden shadow-lg border-4 border-white ${
+                  isCenter ? 'cursor-pointer hover:border-purple-300' : 'cursor-pointer hover:border-purple-300'
+                }`}
                 style={style}
-                onClick={() => setCurrentImageIndex(index)}
+                onClick={isCenter ? handleCenterImageClick : () => setCurrentImageIndex(index)}
               >
                 <img
                   src={image.src}
@@ -202,8 +224,8 @@ const CircularGallery = () => {
           })}
         </div>
 
-        {/* Controls */}
-        <div className="flex justify-center items-center space-x-4 mt-8">
+        {/* Controls - moved higher */}
+        <div className="flex justify-center items-center space-x-4 mt-4">
           <Button
             onClick={goToPrevious}
             variant="outline"
@@ -223,21 +245,8 @@ const CircularGallery = () => {
           </Button>
         </div>
 
-        {/* Progress Indicator */}
-        <div className="mt-6 text-center">
-          <div className="text-sm text-gray-500 mb-2">
-            Imagine {currentImageIndex + 1} din {images.length}
-          </div>
-          <div className="w-full max-w-md mx-auto bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentImageIndex + 1) / images.length) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Event Navigation */}
-        <div className="mt-8 flex flex-wrap justify-center gap-2">
+        {/* Event Navigation - moved higher */}
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
           {events.map((event, index) => (
             <Button
               key={index}
@@ -251,6 +260,31 @@ const CircularGallery = () => {
           ))}
         </div>
       </div>
+
+      {/* Enlarged Image Modal */}
+      {isEnlarged && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={handleEnlargedImageClick}
+        >
+          <div className="relative max-w-5xl max-h-[90vh] w-full h-full flex items-center justify-center">
+            <img
+              src={images[currentImageIndex].src}
+              alt={images[currentImageIndex].alt}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <Button
+              onClick={() => setIsEnlarged(false)}
+              variant="outline"
+              size="icon"
+              className="absolute top-4 right-4 rounded-full bg-white/20 hover:bg-white/40 border-white/30"
+            >
+              <X className="w-5 h-5 text-white" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
