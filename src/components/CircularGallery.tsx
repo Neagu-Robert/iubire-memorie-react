@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -121,6 +120,7 @@ const CircularGallery = () => {
   const handleWheel = (e: React.WheelEvent) => {
     if (isHovering) {
       e.preventDefault();
+      e.stopPropagation();
       // Reversed directions: positive deltaY goes previous, negative goes next
       if (e.deltaY > 0) {
         goToPrevious();
@@ -129,6 +129,26 @@ const CircularGallery = () => {
       }
     }
   };
+
+  // Also handle wheel events on the container to ensure proper capture
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheelCapture = (e: WheelEvent) => {
+      if (isHovering) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Add event listener with capture: true to intercept before it bubbles
+    container.addEventListener('wheel', handleWheelCapture, { passive: false, capture: true });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheelCapture, { capture: true });
+    };
+  }, [isHovering]);
 
   // Calculate positions for horizontal arch arrangement
   const getImageStyle = (index: number) => {
