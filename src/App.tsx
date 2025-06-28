@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import TimelinePage from "./pages/TimelinePage";
 import EvenimenteSpecialePage from "./pages/EvenimenteSpecialePage";
+import CircularGalleryPage from "./pages/CircularGalleryPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/evenimente-speciale" element={<EvenimenteSpecialePage />} />
+          <Route path="/circular-gallery" element={<CircularGalleryPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

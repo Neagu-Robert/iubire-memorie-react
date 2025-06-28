@@ -40,10 +40,10 @@ const Index = () => {
     },
     {
       id: 3,
-      title: "Folder 3",
-      description: "Description for third folder",
+      title: "Galeria Circulară",
+      description: "83 de momente organizate în 9 evenimente speciale",
       color: "from-green-400 to-emerald-500",
-      route: "/folder3",
+      route: "/circular-gallery",
       position: "center-right" as const
     },
     {
