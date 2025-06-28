@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, ArrowRight, Play, Pause } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 import { Button } from './ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface Event {
   title: string;
@@ -69,14 +70,14 @@ const events: Event[] = [
 
 const CircularGallery = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [currentEvent, setCurrentEvent] = useState(events[0]);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Generate placeholder images array (83 total)
   const images = Array.from({ length: 83 }, (_, i) => ({
     id: i + 1,
-    src: `https://images.unsplash.com/photo-${1500000000000 + i * 1000000}?w=400&h=400&fit=crop`,
+    src: `https://images.unsplash.com/photo-${1500000000000 + i * 1000000}?w=300&h=400&fit=crop`,
     alt: `Image ${i + 1}`
   }));
 
@@ -91,25 +92,6 @@ const CircularGallery = () => {
     }
   }, [currentImageIndex, currentEvent]);
 
-  // Auto-play functionality
-  useEffect(() => {
-    if (isAutoPlay) {
-      intervalRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-      }, 3000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isAutoPlay, images.length]);
-
   const goToNext = () => {
     setCurrentImageIndex(prev => (prev + 1) % images.length);
   };
@@ -118,43 +100,52 @@ const CircularGallery = () => {
     setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1);
   };
 
-  const toggleAutoPlay = () => {
-    setIsAutoPlay(!isAutoPlay);
+  const handleBackToHome = () => {
+    navigate('/', { state: { fromFolder: true } });
   };
 
-  // Calculate positions for circular arrangement
+  // Handle mouse wheel scrolling
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      goToNext();
+    } else {
+      goToPrevious();
+    }
+  };
+
+  // Calculate positions for horizontal arch arrangement
   const getImageStyle = (index: number) => {
-    const totalImages = 12; // Number of visible images in circle
-    const radius = 280;
-    const centerX = 300;
-    const centerY = 300;
+    const visibleImages = 7; // Number of visible images
+    const spacing = 180; // Horizontal spacing between images
+    const centerX = 0; // Center position
     
     // Calculate relative position from current image
     let relativeIndex = index - currentImageIndex;
-    if (relativeIndex < -Math.floor(totalImages / 2)) {
+    if (relativeIndex < -Math.floor(visibleImages / 2)) {
       relativeIndex += images.length;
-    } else if (relativeIndex > Math.floor(totalImages / 2)) {
+    } else if (relativeIndex > Math.floor(visibleImages / 2)) {
       relativeIndex -= images.length;
     }
     
     // Only show images within the visible range
-    if (Math.abs(relativeIndex) > Math.floor(totalImages / 2)) {
+    if (Math.abs(relativeIndex) > Math.floor(visibleImages / 2)) {
       return { display: 'none' };
     }
     
-    const angle = (relativeIndex * (360 / totalImages)) * (Math.PI / 180);
-    const x = centerX + radius * Math.cos(angle - Math.PI / 2);
-    const y = centerY + radius * Math.sin(angle - Math.PI / 2);
+    const x = centerX + relativeIndex * spacing;
+    // Create slight arch effect with y position
+    const y = Math.abs(relativeIndex) * 20;
     
-    const scale = relativeIndex === 0 ? 1.3 : 0.8;
-    const zIndex = relativeIndex === 0 ? 10 : 1;
-    const opacity = Math.abs(relativeIndex) > 4 ? 0.3 : 1;
+    const scale = relativeIndex === 0 ? 1.2 : Math.max(0.7, 1 - Math.abs(relativeIndex) * 0.1);
+    const zIndex = relativeIndex === 0 ? 10 : Math.max(1, 10 - Math.abs(relativeIndex));
+    const opacity = Math.abs(relativeIndex) > 3 ? 0.3 : 1;
     
     return {
       position: 'absolute' as const,
-      left: `${x - 60}px`,
-      top: `${y - 60}px`,
-      transform: `scale(${scale})`,
+      left: `calc(50% + ${x}px)`,
+      top: `calc(50% + ${y}px)`,
+      transform: `translate(-50%, -50%) scale(${scale})`,
       zIndex,
       opacity,
       transition: 'all 0.5s ease-in-out'
@@ -164,39 +155,51 @@ const CircularGallery = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">Galeria Noastră Circulară</h1>
-          <div className="transition-all duration-500 ease-in-out">
-            <h2 className="text-2xl font-semibold text-purple-600 mb-2">{currentEvent.title}</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">{currentEvent.description}</p>
+        {/* Header with X button */}
+        <div className="flex justify-between items-start mb-8">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">Activități preferate</h1>
+            <div className="transition-all duration-500 ease-in-out">
+              <h2 className="text-2xl font-semibold text-purple-600 mb-2">{currentEvent.title}</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">{currentEvent.description}</p>
+            </div>
           </div>
+          <Button
+            onClick={handleBackToHome}
+            variant="outline"
+            size="icon"
+            className="rounded-full bg-white/80 hover:bg-white border-gray-300"
+          >
+            <X className="w-5 h-5 text-black" />
+          </Button>
         </div>
 
-        {/* Circular Gallery Container */}
-        <div className="relative w-full max-w-4xl mx-auto">
-          <div className="relative w-[600px] h-[600px] mx-auto">
-            {images.map((image, index) => {
-              const style = getImageStyle(index);
-              if (style.display === 'none') return null;
-              
-              return (
-                <div
-                  key={image.id}
-                  className="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white cursor-pointer hover:border-purple-300"
-                  style={style}
-                  onClick={() => setCurrentImageIndex(index)}
-                >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              );
-            })}
-          </div>
+        {/* Horizontal Gallery Container */}
+        <div 
+          className="relative w-full h-[500px] overflow-hidden cursor-grab active:cursor-grabbing"
+          ref={containerRef}
+          onWheel={handleWheel}
+        >
+          {images.map((image, index) => {
+            const style = getImageStyle(index);
+            if (style.display === 'none') return null;
+            
+            return (
+              <div
+                key={image.id}
+                className="w-48 h-64 rounded-lg overflow-hidden shadow-lg border-4 border-white cursor-pointer hover:border-purple-300"
+                style={style}
+                onClick={() => setCurrentImageIndex(index)}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Controls */}
@@ -208,24 +211,6 @@ const CircularGallery = () => {
             className="rounded-full"
           >
             <ArrowLeft className="w-5 h-5" />
-          </Button>
-          
-          <Button
-            onClick={toggleAutoPlay}
-            variant="outline"
-            className="px-6"
-          >
-            {isAutoPlay ? (
-              <>
-                <Pause className="w-4 h-4 mr-2" />
-                Pause
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-2" />
-                Play
-              </>
-            )}
           </Button>
           
           <Button
