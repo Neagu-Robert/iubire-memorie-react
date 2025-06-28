@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Folder, X } from 'lucide-react';
 
@@ -48,19 +49,6 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
       <div className={`w-full max-w-md ${isLeft ? 'pr-8' : 'pl-8'}`}
         style={{ position: 'relative' }}
       >
-        {/* X button always on top when open */}
-        {isOpen && (
-          <button
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 z-20"
-            onClick={e => {
-              e.stopPropagation();
-              setIsOpen(false);
-            }}
-            aria-label="Închide folderul"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
         <div
           className={`group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden ${
             isOpen ? 'shadow-2xl' : ''
@@ -83,9 +71,24 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
                   <p className="text-sm opacity-90">{item.date}</p>
                 </div>
               </div>
-              <Folder className={`w-6 h-6 transition-transform duration-300 ${
-                isOpen ? 'rotate-12 scale-110' : 'rotate-0 scale-100'
-              }`} />
+              <div className="flex items-center space-x-2">
+                {/* X button positioned to the left of the folder icon when open */}
+                {isOpen && (
+                  <button
+                    className="text-black hover:text-gray-700 z-20"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setIsOpen(false);
+                    }}
+                    aria-label="Închide folderul"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+                <Folder className={`w-6 h-6 transition-transform duration-300 ${
+                  isOpen ? 'rotate-12 scale-110' : 'rotate-0 scale-100'
+                }`} />
+              </div>
             </div>
           </div>
 
