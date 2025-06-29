@@ -3,10 +3,13 @@ import React, { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import FolderCard from '../components/FolderCard';
 import InteractiveCat from '../components/InteractiveCat';
+import VintageMusicPlayer from '../components/VintageMusicPlayer';
+import VinylCollection from '../components/VinylCollection';
 import { useLocation } from 'react-router-dom';
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isVinylCollectionOpen, setIsVinylCollectionOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -92,6 +95,15 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Vintage Music Player */}
+      <VintageMusicPlayer onOpen={() => setIsVinylCollectionOpen(true)} />
+      
+      {/* Vinyl Collection Overlay */}
+      <VinylCollection 
+        isOpen={isVinylCollectionOpen} 
+        onClose={() => setIsVinylCollectionOpen(false)} 
+      />
     </div>
   );
 };
