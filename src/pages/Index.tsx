@@ -65,7 +65,7 @@ const Index = () => {
       <Hero />
       
       {/* New folders section */}
-      <section id="folders-section" className="min-h-screen bg-gradient-to-br from-[#c60000] via-[#b70000] to-[#9b0000] py-20 flex flex-col items-center justify-center relative">
+      <section id="folders-section" className="min-h-screen bg-transparent py-20 flex flex-col items-center justify-center relative">
         <div className="max-w-6xl mx-auto px-4 text-center">
           
           {/* Folders arranged in an arch */}
