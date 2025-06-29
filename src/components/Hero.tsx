@@ -9,7 +9,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#ff0000] via-[#d70000] to-[#b70000]">
+    <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#cc0000] via-[#aa0000] to-[#880000]">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>

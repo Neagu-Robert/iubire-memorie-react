@@ -59,7 +59,7 @@ const Index = () => {
 
   return (
     <div
-      className={`min-h-screen transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} bg-gradient-to-br from-[#ff0000] via-[#d70000] via-[#c60000] to-[#9b0000]`}
+      className={`min-h-screen transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} bg-gradient-to-br from-[#cc0000] via-[#aa0000] via-[#880000] to-[#660000]`}
       style={{ backgroundAttachment: 'fixed' }}
     >
       <Hero />
