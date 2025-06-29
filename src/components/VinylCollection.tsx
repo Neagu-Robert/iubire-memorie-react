@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, X, Disc } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Disc, Play, Pause, Shuffle } from 'lucide-react';
 
 interface Song {
   id: number;
@@ -16,6 +16,7 @@ interface VinylCollectionProps {
 
 const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Sample songs data - will be replaced with actual songs later
   const songs: Song[] = [
@@ -32,6 +33,15 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
 
   const prevSong = () => {
     setCurrentIndex((prev) => (prev - 1 + songs.length) % songs.length);
+  };
+
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleShuffle = () => {
+    const randomIndex = Math.floor(Math.random() * songs.length);
+    setCurrentIndex(randomIndex);
   };
 
   const getVisibleVinyls = () => {
@@ -67,7 +77,7 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
         </div>
 
         {/* Vinyl stack display */}
-        <div className="relative flex-1 flex items-center justify-center px-8 pb-8">
+        <div className="relative flex-1 flex items-center justify-center px-8 pb-20">
           <div className="relative w-80 h-80">
             {getVisibleVinyls().map(({ song, offset, zIndex }) => (
               <div
@@ -91,12 +101,12 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
                     </div>
                   </div>
                   
-                  {/* Song info */}
+                  {/* Song info - positioned over the vinyl without white background */}
                   {offset === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center text-white">
+                      <div className="text-center text-white bg-black/60 rounded-lg p-4 backdrop-blur-sm">
                         <h3 className="text-lg font-bold mb-1">{song.title}</h3>
-                        <p className="text-sm opacity-80">{song.artist}</p>
+                        <p className="text-sm opacity-90">{song.artist}</p>
                       </div>
                     </div>
                   )}
@@ -106,8 +116,26 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
           </div>
         </div>
 
+        {/* Control buttons */}
+        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-6">
+          {/* Play/Pause and Shuffle buttons */}
+          <button
+            onClick={togglePlay}
+            className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
+          >
+            {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+          </button>
+          
+          <button
+            onClick={handleShuffle}
+            className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
+          >
+            <Shuffle className="w-6 h-6" />
+          </button>
+        </div>
+
         {/* Navigation controls */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-8">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-8">
           <button
             onClick={prevSong}
             className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
