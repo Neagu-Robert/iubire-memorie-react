@@ -1,11 +1,15 @@
+
 import React, { useEffect, useState } from 'react';
+
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
   return (
-    <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-pink-300 via-purple-400 to-violet-600">
+    <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#ff0000] via-[#d70000] to-[#b70000]">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
@@ -21,7 +25,7 @@ const Hero = () => {
             <span className="block bg-gradient-to-r from-pink-200 to-white bg-clip-text text-transparent">Iubito! 💖</span>
           </h1>
           <div className={`transition-all duration-2000 delay-500 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}> 
-            <p className="text-lg md:text-xl lg:text-2xl mb-12 max-w-2xl mx-auto leading-relaxed text-purple-100">
+            <p className="text-lg md:text-xl lg:text-2xl mb-12 max-w-2xl mx-auto leading-relaxed text-red-100">
               Am creat un mic traseu cu amintirile noastre
             </p>
           </div>
@@ -29,8 +33,9 @@ const Hero = () => {
       </div>
 
       {/* Gradient overlay for smooth transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-pink-200/80 via-transparent to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#c60000]/80 via-transparent to-transparent"></div>
     </section>
   );
 };
+
 export default Hero;

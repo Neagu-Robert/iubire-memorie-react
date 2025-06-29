@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import FolderCard from '../components/FolderCard';
@@ -58,13 +59,13 @@ const Index = () => {
 
   return (
     <div
-      className={`min-h-screen transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} bg-gradient-to-br from-purple-400 via-pink-200 via-60% to-violet-600`}
+      className={`min-h-screen transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} bg-gradient-to-br from-[#ff0000] via-[#d70000] via-[#c60000] to-[#9b0000]`}
       style={{ backgroundAttachment: 'fixed' }}
     >
       <Hero />
       
       {/* New folders section */}
-      <section id="folders-section" className="min-h-screen bg-transparent py-20 flex flex-col items-center justify-center relative">
+      <section id="folders-section" className="min-h-screen bg-gradient-to-br from-[#c60000] via-[#b70000] to-[#9b0000] py-20 flex flex-col items-center justify-center relative">
         <div className="max-w-6xl mx-auto px-4 text-center">
           
           {/* Folders arranged in an arch */}
@@ -85,7 +86,7 @@ const Index = () => {
           <InteractiveCat />
           
           <div className="text-center">
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-red-100 max-w-2xl mx-auto">
               Alege una dintre colecții pentru a descoperi amintirile noastre speciale
             </p>
           </div>
