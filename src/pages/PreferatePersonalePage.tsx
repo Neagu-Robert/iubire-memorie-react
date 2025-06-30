@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PhotoStack from '../components/PhotoStack';
@@ -7,47 +7,51 @@ import PhotoStack from '../components/PhotoStack';
 const PreferatePersonalePage = () => {
   const navigate = useNavigate();
 
-  // Sample photos data - using placeholder images
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Sample photos data - using blank placeholders
   const photos = [
     {
       id: 1,
-      src: 'photo-1649972904349-6e44c42644a7',
-      alt: 'Woman with laptop'
+      src: '',
+      alt: 'Photo 1'
     },
     {
       id: 2,
-      src: 'photo-1488590528505-98d2b5aba04b',
-      alt: 'Gray laptop computer'
+      src: '',
+      alt: 'Photo 2'
     },
     {
       id: 3,
-      src: 'photo-1581091226825-a6a2a5aee158',
-      alt: 'Woman using laptop'
+      src: '',
+      alt: 'Photo 3'
     },
     {
       id: 4,
-      src: 'photo-1526374965328-7f61d4dc18c5',
-      alt: 'Matrix movie still'
+      src: '',
+      alt: 'Photo 4'
     },
     {
       id: 5,
-      src: 'photo-1500673922987-e212871fec22',
-      alt: 'Yellow lights between trees'
+      src: '',
+      alt: 'Photo 5'
     },
     {
       id: 6,
-      src: 'photo-1501854140801-50d01698950b',
-      alt: 'Green mountains aerial view'
+      src: '',
+      alt: 'Photo 6'
     },
     {
       id: 7,
-      src: 'photo-1470813740244-df37b8c1edcb',
-      alt: 'Blue starry night'
+      src: '',
+      alt: 'Photo 7'
     },
     {
       id: 8,
-      src: 'photo-1582562124811-c09040d0a901',
-      alt: 'Orange tabby cat'
+      src: '',
+      alt: 'Photo 8'
     }
   ];
 

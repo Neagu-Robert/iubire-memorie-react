@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 interface Photo {
   id: number;
@@ -18,23 +18,25 @@ const PhotoStack: React.FC<PhotoStackProps> = ({ photos }) => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
     setDragOffset({ x: 0, y: 0 });
-  };
+  }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging) return;
     
+    e.preventDefault();
     const deltaX = e.clientX - dragStart.x;
     setDragOffset({ x: deltaX, y: 0 });
-  };
+  }, [isDragging, dragStart.x]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (!isDragging) return;
     
-    const threshold = 100; // Minimum drag distance to trigger navigation
+    const threshold = 80; // Reduced threshold for better responsiveness
     
     if (dragOffset.x > threshold) {
       // Dragged right - go to previous photo
@@ -46,7 +48,7 @@ const PhotoStack: React.FC<PhotoStackProps> = ({ photos }) => {
     
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
-  };
+  }, [isDragging, dragOffset.x, photos.length]);
 
   const getVisiblePhotos = () => {
     const visible = [];
@@ -67,7 +69,7 @@ const PhotoStack: React.FC<PhotoStackProps> = ({ photos }) => {
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
       <div
         ref={containerRef}
-        className="relative w-80 h-96 cursor-grab active:cursor-grabbing"
+        className="relative w-80 h-96 cursor-grab active:cursor-grabbing select-none"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -76,7 +78,7 @@ const PhotoStack: React.FC<PhotoStackProps> = ({ photos }) => {
         {getVisiblePhotos().map(({ photo, zIndex, offset, rotation, scale }) => (
           <div
             key={`${photo.id}-${currentIndex}-${offset}`}
-            className="absolute inset-0 transition-all duration-300 ease-out"
+            className={`absolute inset-0 ${isDragging && offset === 0 ? '' : 'transition-transform duration-200 ease-out'}`}
             style={{
               zIndex,
               transform: `
@@ -89,12 +91,9 @@ const PhotoStack: React.FC<PhotoStackProps> = ({ photos }) => {
             }}
           >
             <div className="w-full h-full bg-white rounded-lg shadow-2xl overflow-hidden border-8 border-white">
-              <img
-                src={`https://images.unsplash.com/${photo.src}`}
-                alt={photo.alt}
-                className="w-full h-full object-cover select-none"
-                draggable={false}
-              />
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-500 text-lg">{photo.alt}</span>
+              </div>
             </div>
           </div>
         ))}
