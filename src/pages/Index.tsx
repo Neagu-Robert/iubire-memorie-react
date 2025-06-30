@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import FolderCard from '../components/FolderCard';
@@ -52,17 +51,17 @@ const Index = () => {
     },
     {
       id: 4,
-      title: "Folder 4",
-      description: "Description for fourth folder",
+      title: "Preferate personale",
+      description: "Colecția cu fotografiile noastre preferate",
       color: "from-orange-400 to-red-500",
-      route: "/folder4",
+      route: "/preferate-personale",
       position: "right" as const
     }
   ];
 
   return (
     <div
-      className={`min-h-screen transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} bg-gradient-to-br from-[#cc0000] via-[#aa0000] via-[#880000] to-[#660000]`}
+      className={`min-h-screen transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'} bg-gradient-to-br from-[#8b0000] via-[#660000] via-[#4a0000] to-[#330000]`}
       style={{ backgroundAttachment: 'fixed' }}
     >
       <Hero />
