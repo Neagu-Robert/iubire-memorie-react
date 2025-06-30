@@ -2,14 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 const InteractiveCat = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isSwatting, setIsSwatting] = useState(false);
-  const [swatAngle, setSwatAngle] = useState(0); // angle in degrees
-  const [swatPhase, setSwatPhase] = useState(0); // 0: rest, 1: slap, 2: return
   const [animationPhase, setAnimationPhase] = useState(0); // For continuous animations
-  const swatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const pawRef = useRef<SVGGElement>(null);
   const leftPupilRef = useRef<SVGCircleElement>(null);
   const rightPupilRef = useRef<SVGCircleElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -42,9 +36,7 @@ const InteractiveCat = () => {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
       updatePupilPositions(e.clientX, e.clientY);
-      checkPawProximity(e.clientX, e.clientY);
     };
 
     const updatePupilPositions = (mouseX: number, mouseY: number) => {
@@ -90,63 +82,12 @@ const InteractiveCat = () => {
       }
     };
 
-    const checkPawProximity = (mouseX: number, mouseY: number) => {
-      if (pawRef.current && svgRef.current) {
-        const pawRect = pawRef.current.getBoundingClientRect();
-        const svgRect = svgRef.current.getBoundingClientRect();
-        const pawCenterX = pawRect.left + pawRect.width / 2;
-        const pawCenterY = pawRect.top + pawRect.height / 2;
-        const distance = Math.sqrt(
-          Math.pow(mouseX - pawCenterX, 2) + Math.pow(mouseY - pawCenterY, 2)
-        );
-        if (distance < 100) {
-          // Calculate angle from paw to cursor (in SVG coordinates)
-          const svgPawX = ((pawCenterX - svgRect.left) / svgRect.width) * 200;
-          const svgPawY = ((pawCenterY - svgRect.top) / svgRect.height) * 200;
-          const svgMouseX = ((mouseX - svgRect.left) / svgRect.width) * 200;
-          const svgMouseY = ((mouseY - svgRect.top) / svgRect.height) * 200;
-          const dx = svgMouseX - svgPawX;
-          const dy = svgMouseY - svgPawY;
-          const angle = Math.atan2(dy, dx) * (180 / Math.PI); // degrees
-          setSwatAngle(angle);
-          if (!isSwatting) setIsSwatting(true);
-        } else {
-          setIsSwatting(false);
-          setSwatAngle(0); // Reset paw to default position
-        }
-      }
-    };
-
     document.addEventListener('mousemove', handleMouseMove);
     
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [isSwatting]);
-
-  // Swatting animation effect
-  useEffect(() => {
-    if (isSwatting) {
-      if (!swatIntervalRef.current) {
-        setSwatPhase(0);
-        swatIntervalRef.current = setInterval(() => {
-          setSwatPhase(prev => (prev === 0 ? 1 : 0));
-        }, 100); // 100ms per slap (faster)
-      }
-    } else {
-      if (swatIntervalRef.current) {
-        clearInterval(swatIntervalRef.current);
-        swatIntervalRef.current = null;
-        setSwatPhase(0);
-      }
-    }
-    return () => {
-      if (swatIntervalRef.current) {
-        clearInterval(swatIntervalRef.current);
-        swatIntervalRef.current = null;
-      }
-    };
-  }, [isSwatting]);
+  }, []);
 
   return (
     <>
@@ -200,14 +141,13 @@ const InteractiveCat = () => {
             <line x1="120" y1="85" x2="140" y2="80" stroke="#333" strokeWidth="2" />
             <line x1="120" y1="90" x2="140" y2="90" stroke="#333" strokeWidth="2" />
             
-            {/* Paw for swatting - now with saluting animation */}
+            {/* Paw - now only with saluting animation */}
             <g
-              ref={pawRef}
               id="Paw"
               className={"transition-transform duration-100"}
               style={{
                 transformOrigin: '160px 120px',
-                transform: `rotate(${isSwatting ? (swatPhase === 1 ? swatAngle + 60 : swatAngle) : getPawRotation()}deg)`
+                transform: `rotate(${getPawRotation()}deg)`
               }}
             >
               <ellipse cx="160" cy="120" rx="15" ry="25" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
@@ -216,7 +156,7 @@ const InteractiveCat = () => {
               <circle cx="160" cy="105" r="4" fill="#ff6666" />
             </g>
             
-            {/* Tail - now with wagging animation */}
+            {/* Tail - with wagging animation */}
             <g
               id="Tail"
               style={{
