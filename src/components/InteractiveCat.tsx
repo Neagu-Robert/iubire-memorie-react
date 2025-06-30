@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 
 const InteractiveCat = () => {
@@ -5,13 +6,39 @@ const InteractiveCat = () => {
   const [isSwatting, setIsSwatting] = useState(false);
   const [swatAngle, setSwatAngle] = useState(0); // angle in degrees
   const [swatPhase, setSwatPhase] = useState(0); // 0: rest, 1: slap, 2: return
+  const [animationPhase, setAnimationPhase] = useState(0); // For continuous animations
   const swatIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pawRef = useRef<SVGGElement>(null);
   const leftPupilRef = useRef<SVGCircleElement>(null);
   const rightPupilRef = useRef<SVGCircleElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [isLoveCatHovered, setIsLoveCatHovered] = useState(false);
   const loveCatVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Continuous animation effect for tail and paw
+  useEffect(() => {
+    animationIntervalRef.current = setInterval(() => {
+      setAnimationPhase(prev => (prev + 1) % 120); // 120 frames for smooth cycle
+    }, 50); // 50ms interval for smooth animation
+
+    return () => {
+      if (animationIntervalRef.current) {
+        clearInterval(animationIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Calculate tail and paw positions based on animation phase
+  const getTailRotation = () => {
+    // Slow wagging motion using sine wave
+    return Math.sin(animationPhase * 0.1) * 15; // ±15 degrees
+  };
+
+  const getPawRotation = () => {
+    // Saluting motion in opposite direction to tail
+    return Math.sin(animationPhase * 0.1 + Math.PI) * 20; // ±20 degrees, offset by π
+  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -173,14 +200,14 @@ const InteractiveCat = () => {
             <line x1="120" y1="85" x2="140" y2="80" stroke="#333" strokeWidth="2" />
             <line x1="120" y1="90" x2="140" y2="90" stroke="#333" strokeWidth="2" />
             
-            {/* Paw for swatting */}
+            {/* Paw for swatting - now with saluting animation */}
             <g
               ref={pawRef}
               id="Paw"
               className={"transition-transform duration-100"}
               style={{
                 transformOrigin: '160px 120px',
-                transform: `rotate(${isSwatting ? (swatPhase === 1 ? swatAngle + 60 : swatAngle) : 0}deg)`
+                transform: `rotate(${isSwatting ? (swatPhase === 1 ? swatAngle + 60 : swatAngle) : getPawRotation()}deg)`
               }}
             >
               <ellipse cx="160" cy="120" rx="15" ry="25" fill="#ff9999" stroke="#ff6666" strokeWidth="2" />
@@ -189,8 +216,14 @@ const InteractiveCat = () => {
               <circle cx="160" cy="105" r="4" fill="#ff6666" />
             </g>
             
-            {/* Tail - static */}
-            <g id="Tail">
+            {/* Tail - now with wagging animation */}
+            <g
+              id="Tail"
+              style={{
+                transformOrigin: '50px 140px',
+                transform: `rotate(${getTailRotation()}deg)`
+              }}
+            >
               <path d="M50,140 Q30,120 25,100 Q20,80 30,60" stroke="#ff6666" strokeWidth="12" fill="none" strokeLinecap="round" />
             </g>
           </svg>
