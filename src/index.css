@@ -101,3 +101,65 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Swing Out Top Forward */
+@keyframes swing-out-top-fwd {
+  0% {
+    transform: rotateX(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(70deg) scale(0.95) translateY(-100px);
+    opacity: 0;
+  }
+}
+.swing-out-top-fwd {
+  animation: swing-out-top-fwd 0.55s cubic-bezier(0.6, -0.28, 0.735, 0.045) both;
+}
+
+/* Swing In Top Forward (reverse of out) */
+@keyframes swing-in-top-fwd {
+  0% {
+    transform: rotateX(70deg) scale(0.95) translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg) scale(1);
+    opacity: 1;
+  }
+}
+.swing-in-top-fwd {
+  animation: swing-in-top-fwd 0.55s cubic-bezier(0.6, -0.28, 0.735, 0.045) both;
+}
+
+/* Swing In Bottom Back */
+@keyframes swing-in-bottom-bck {
+  0% {
+    transform: rotateX(-70deg) scale(0.95) translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg) scale(1);
+    opacity: 1;
+  }
+}
+.swing-in-bottom-bck {
+  animation: swing-in-bottom-bck 0.55s cubic-bezier(0.6, -0.28, 0.735, 0.045)
+    both;
+}
+
+/* Swing Out Bottom Back */
+@keyframes swing-out-bottom-bck {
+  0% {
+    transform: rotateX(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(-70deg) scale(0.95) translateY(100px);
+    opacity: 0;
+  }
+}
+.swing-out-bottom-bck {
+  animation: swing-out-bottom-bck 0.55s cubic-bezier(0.6, -0.28, 0.735, 0.045)
+    both;
+}

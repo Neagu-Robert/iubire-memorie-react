@@ -1,8 +1,7 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import { Button } from './ui/button';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface Event {
   title: string;
@@ -16,56 +15,56 @@ const events: Event[] = [
     title: "Ieșiri romantice în oraș",
     description: "Momentele noastre frumoase prin orașul drag",
     imageCount: 16,
-    startIndex: 0
+    startIndex: 0,
   },
   {
     title: "Plimbări relaxante",
     description: "Pași liniștiți prin parcuri și străzi",
     imageCount: 22,
-    startIndex: 16
+    startIndex: 16,
   },
   {
     title: "Activități sportive",
     description: "Mișcare și energie împreună",
     imageCount: 4,
-    startIndex: 38
+    startIndex: 38,
   },
   {
     title: "Datul pe leagăn",
     description: "Momente de bucurie și nostalgie",
     imageCount: 15,
-    startIndex: 42
+    startIndex: 42,
   },
   {
     title: "Cititul",
     description: "Cărți și povești împărtășite",
     imageCount: 2,
-    startIndex: 57
+    startIndex: 57,
   },
   {
     title: "Sesiuni de gătit",
     description: "Creativitate culinară în bucătărie",
     imageCount: 7,
-    startIndex: 59
+    startIndex: 59,
   },
   {
     title: "Jocurile",
     description: "Distracție și râsete",
     imageCount: 4,
-    startIndex: 66
+    startIndex: 66,
   },
   {
     title: "Petrecut timp cu cei dragi",
     description: "Familie și prieteni alături",
     imageCount: 10,
-    startIndex: 70
+    startIndex: 70,
   },
   {
     title: "Preferatul meu: petrecut timp cu tine oricând, oriunde am fi",
     description: "Cele mai prețioase momente împreună",
     imageCount: 3,
-    startIndex: 80
-  }
+    startIndex: 80,
+  },
 ];
 
 const CircularGallery = () => {
@@ -75,19 +74,24 @@ const CircularGallery = () => {
   const [isEnlarged, setIsEnlarged] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [isPeekCatHovered, setIsPeekCatHovered] = useState(false);
+  const peekCatRef = useRef<HTMLVideoElement>(null);
 
   // Generate placeholder images array (83 total)
   const images = Array.from({ length: 83 }, (_, i) => ({
     id: i + 1,
-    src: `https://images.unsplash.com/photo-${1500000000000 + i * 1000000}?w=300&h=400&fit=crop`,
-    alt: `Image ${i + 1}`
+    src: `https://images.unsplash.com/photo-${
+      1500000000000 + i * 1000000
+    }?w=300&h=400&fit=crop`,
+    alt: `Image ${i + 1}`,
   }));
 
   // Calculate which event we're currently in
   useEffect(() => {
-    const current = events.find(event => 
-      currentImageIndex >= event.startIndex && 
-      currentImageIndex < event.startIndex + event.imageCount
+    const current = events.find(
+      (event) =>
+        currentImageIndex >= event.startIndex &&
+        currentImageIndex < event.startIndex + event.imageCount
     );
     if (current && current !== currentEvent) {
       setCurrentEvent(current);
@@ -95,15 +99,15 @@ const CircularGallery = () => {
   }, [currentImageIndex, currentEvent]);
 
   const goToNext = () => {
-    setCurrentImageIndex(prev => (prev + 1) % images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
   const goToPrevious = () => {
-    setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1);
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
   const handleBackToHome = () => {
-    navigate('/', { state: { fromFolder: true } });
+    navigate("/", { state: { fromFolder: true } });
   };
 
   const handleCenterImageClick = () => {
@@ -135,7 +139,7 @@ const CircularGallery = () => {
     const visibleImages = 7; // Number of visible images
     const spacing = 180; // Horizontal spacing between images
     const centerX = 0; // Center position
-    
+
     // Calculate relative position from current image
     let relativeIndex = index - currentImageIndex;
     if (relativeIndex < -Math.floor(visibleImages / 2)) {
@@ -143,41 +147,51 @@ const CircularGallery = () => {
     } else if (relativeIndex > Math.floor(visibleImages / 2)) {
       relativeIndex -= images.length;
     }
-    
+
     // Only show images within the visible range
     if (Math.abs(relativeIndex) > Math.floor(visibleImages / 2)) {
-      return { display: 'none' };
+      return { display: "none" };
     }
-    
+
     const x = centerX + relativeIndex * spacing;
     // Create slight arch effect with y position
     const y = Math.abs(relativeIndex) * 20;
-    
-    const scale = relativeIndex === 0 ? 1.2 : Math.max(0.7, 1 - Math.abs(relativeIndex) * 0.1);
-    const zIndex = relativeIndex === 0 ? 10 : Math.max(1, 10 - Math.abs(relativeIndex));
+
+    const scale =
+      relativeIndex === 0
+        ? 1.2
+        : Math.max(0.7, 1 - Math.abs(relativeIndex) * 0.1);
+    const zIndex =
+      relativeIndex === 0 ? 10 : Math.max(1, 10 - Math.abs(relativeIndex));
     const opacity = Math.abs(relativeIndex) > 3 ? 0.3 : 1;
-    
+
     return {
-      position: 'absolute' as const,
+      position: "absolute" as const,
       left: `calc(50% + ${x}px)`,
       top: `calc(50% + ${y}px)`,
       transform: `translate(-50%, -50%) scale(${scale})`,
       zIndex,
       opacity,
-      transition: 'all 0.5s ease-in-out'
+      transition: "all 0.5s ease-in-out",
     };
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 py-8 relative">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header with X button */}
         <div className="flex justify-between items-start mb-8">
           <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">Activități preferate</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              Activități preferate
+            </h1>
             <div className="transition-all duration-500 ease-in-out">
-              <h2 className="text-2xl font-semibold text-purple-600 mb-2">{currentEvent.title}</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">{currentEvent.description}</p>
+              <h2 className="text-2xl font-semibold text-purple-600 mb-2">
+                {currentEvent.title}
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                {currentEvent.description}
+              </p>
             </div>
           </div>
           <Button
@@ -191,7 +205,7 @@ const CircularGallery = () => {
         </div>
 
         {/* Horizontal Gallery Container */}
-        <div 
+        <div
           className="relative w-full h-[500px] overflow-hidden cursor-grab active:cursor-grabbing"
           ref={containerRef}
           onWheel={handleWheel}
@@ -200,18 +214,24 @@ const CircularGallery = () => {
         >
           {images.map((image, index) => {
             const style = getImageStyle(index);
-            if (style.display === 'none') return null;
-            
+            if (style.display === "none") return null;
+
             const isCenter = index === currentImageIndex;
-            
+
             return (
               <div
                 key={image.id}
                 className={`w-48 h-64 rounded-lg overflow-hidden shadow-lg border-4 border-white ${
-                  isCenter ? 'cursor-pointer hover:border-purple-300' : 'cursor-pointer hover:border-purple-300'
+                  isCenter
+                    ? "cursor-pointer hover:border-purple-300"
+                    : "cursor-pointer hover:border-purple-300"
                 }`}
                 style={style}
-                onClick={isCenter ? handleCenterImageClick : () => setCurrentImageIndex(index)}
+                onClick={
+                  isCenter
+                    ? handleCenterImageClick
+                    : () => setCurrentImageIndex(index)
+                }
               >
                 <img
                   src={image.src}
@@ -234,7 +254,7 @@ const CircularGallery = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          
+
           <Button
             onClick={goToNext}
             variant="outline"
@@ -261,9 +281,44 @@ const CircularGallery = () => {
         </div>
       </div>
 
+      {/* Peek Cat Animation absolutely at the bottom center of the gallery */}
+      <div
+        style={{
+          position: "fixed",
+          left: "50%",
+          bottom: 0,
+          transform: "translateX(-50%)",
+          zIndex: 50,
+        }}
+        className="pointer-events-auto"
+      >
+        <video
+          ref={peekCatRef}
+          src="/animations/peek_cat.webm"
+          className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 object-contain cursor-pointer drop-shadow-xl"
+          style={{ maxWidth: "160px" }}
+          muted
+          loop
+          playsInline
+          onMouseEnter={() => {
+            setIsPeekCatHovered(true);
+            if (peekCatRef.current) {
+              peekCatRef.current.play();
+            }
+          }}
+          onMouseLeave={() => {
+            setIsPeekCatHovered(false);
+            if (peekCatRef.current) {
+              peekCatRef.current.pause();
+              peekCatRef.current.currentTime = 0;
+            }
+          }}
+        />
+      </div>
+
       {/* Enlarged Image Modal */}
       {isEnlarged && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
           onClick={handleEnlargedImageClick}
         >
