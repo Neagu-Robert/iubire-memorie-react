@@ -146,6 +146,7 @@ const Timeline = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
   const [showPhotoViewer, setShowPhotoViewer] = useState(false);
+  const [viewMode, setViewMode] = useState<'browse' | 'collage'>('browse');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -167,8 +168,9 @@ const Timeline = () => {
     return () => observer.disconnect();
   }, []);
 
-  const handleItemExpand = (id: number) => {
+  const handleItemExpand = (id: number, mode: 'browse' | 'collage') => {
     setExpandedItem(id);
+    setViewMode(mode);
     setShowPhotoViewer(true);
   };
 
@@ -281,6 +283,7 @@ const Timeline = () => {
           description={getCurrentItem()?.description || ''}
           musicSrc={getMusicForItem(expandedItem)}
           onClose={handleCloseExpanded}
+          initialMode={viewMode}
         />
       )}
     </section>

@@ -14,7 +14,7 @@ interface TimelineItemProps {
   index: number;
   isVisible: boolean;
   isLeft: boolean;
-  onExpand: (id: number) => void;
+  onExpand: (id: number, mode: 'browse' | 'collage') => void;
   hasMusic?: boolean;
 }
 
@@ -26,7 +26,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
   };
 
   const handleViewPhotos = (mode: 'browse' | 'collage') => {
-    onExpand(item.id);
+    onExpand(item.id, mode);
   };
 
   return (
@@ -103,7 +103,10 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
               {/* Two buttons for viewing options */}
               <div className="flex space-x-4">
                 <button
-                  onClick={() => handleViewPhotos('browse')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewPhotos('browse');
+                  }}
                   className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border-2 border-blue-200"
                 >
                   <Eye className="w-6 h-6 text-blue-600" />
@@ -112,7 +115,10 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
 
                 {hasMusic && (
                   <button
-                    onClick={() => handleViewPhotos('collage')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewPhotos('collage');
+                    }}
                     className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors border-2 border-purple-200"
                   >
                     <Play className="w-6 h-6 text-purple-600" />

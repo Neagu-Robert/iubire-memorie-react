@@ -16,6 +16,7 @@ interface PhotoCollectionViewerProps {
   description: string;
   musicSrc?: string;
   onClose: () => void;
+  initialMode?: 'browse' | 'collage';
 }
 
 const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
@@ -23,9 +24,12 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
   title,
   description,
   musicSrc,
-  onClose
+  onClose,
+  initialMode = 'selection'
 }) => {
-  const [viewMode, setViewMode] = useState<'selection' | 'browse' | 'collage'>('selection');
+  const [viewMode, setViewMode] = useState<'selection' | 'browse' | 'collage'>(
+    initialMode === 'browse' || initialMode === 'collage' ? initialMode : 'selection'
+  );
 
   const handleModeSelect = (mode: 'browse' | 'collage') => {
     setViewMode(mode);
