@@ -18,7 +18,7 @@ const evenimenteData = [
     title: "Zile de naștere la Old Mill",
     description:
       "Serbări speciale în locul nostru preferat, unde fiecare an în plus este celebrat cu stil și eleganță.",
-    icon: "🏛️",
+    icon: "🍕",
     date: "Aniversări elegante",
     color: "from-amber-400 to-orange-500",
   },
@@ -36,7 +36,7 @@ const evenimenteData = [
     title: "Majoratul",
     description:
       "Trecerea în lumea adulților, cu toate emoțiile și speranțele unei noi etape din viață.",
-    icon: "🎓",
+    icon: "🎉",
     date: "18 ani împliniți",
     color: "from-purple-400 to-indigo-500",
   },
