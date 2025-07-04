@@ -177,19 +177,19 @@ const CircularGallery = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 py-8 relative">
+    <div className="min-h-screen py-8 relative">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header with X button */}
         <div className="flex justify-between items-start mb-8">
           <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            <h1 className="text-4xl font-bold text-white mb-4">
               Activități preferate
             </h1>
             <div className="transition-all duration-500 ease-in-out">
               <h2 className="text-2xl font-semibold text-purple-600 mb-2">
                 {currentEvent.title}
               </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <p className="text-gray-100 max-w-2xl mx-auto">
                 {currentEvent.description}
               </p>
             </div>

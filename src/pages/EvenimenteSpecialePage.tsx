@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import EvenimenteSpecialeTimeline from '../components/EvenimenteSpecialeTimeline';
+import React, { useEffect } from "react";
+import EvenimenteSpecialeTimeline from "../components/EvenimenteSpecialeTimeline";
 
 const EvenimenteSpecialePage = () => {
   useEffect(() => {
@@ -7,7 +7,16 @@ const EvenimenteSpecialePage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundImage: "url('/backgrounds/special_events_background.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <EvenimenteSpecialeTimeline />
     </div>
   );

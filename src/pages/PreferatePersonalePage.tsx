@@ -55,7 +55,16 @@ const PreferatePersonalePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#8b0000] via-[#660000] via-[#4a0000] to-[#330000]">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundImage: "url('/backgrounds/favourites_background.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       {/* Header */}
       <div className="relative z-10 p-6">
         <button
