@@ -14,7 +14,7 @@ interface PhotoCollectionViewerProps {
   photos: Photo[];
   title: string;
   description: string;
-  musicSrc: string;
+  musicSrc?: string;
   onClose: () => void;
 }
 
@@ -51,7 +51,7 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
     );
   }
 
-  if (viewMode === 'collage') {
+  if (viewMode === 'collage' && musicSrc) {
     return (
       <AnimatedCollage
         photos={photos}
@@ -78,22 +78,24 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="flex space-x-4">
           <button
             onClick={() => handleModeSelect('browse')}
-            className="w-full flex items-center justify-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border-2 border-blue-200"
+            className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border-2 border-blue-200"
           >
-            <Eye className="w-6 h-6 text-blue-600" />
-            <span className="text-blue-600 font-semibold">Browse Photos</span>
+            <Eye className="w-8 h-8 text-blue-600" />
+            <span className="text-blue-600 font-semibold text-center">Vezi pozele normal</span>
           </button>
 
-          <button
-            onClick={() => handleModeSelect('collage')}
-            className="w-full flex items-center justify-center space-x-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors border-2 border-purple-200"
-          >
-            <Play className="w-6 h-6 text-purple-600" />
-            <span className="text-purple-600 font-semibold">Animated Collage with Music</span>
-          </button>
+          {musicSrc && (
+            <button
+              onClick={() => handleModeSelect('collage')}
+              className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors border-2 border-purple-200"
+            >
+              <Play className="w-8 h-8 text-purple-600" />
+              <span className="text-purple-600 font-semibold text-center">Vezi cu melodie surpriză</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

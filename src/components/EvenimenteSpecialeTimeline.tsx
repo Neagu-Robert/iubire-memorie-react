@@ -123,18 +123,18 @@ const EvenimenteSpecialeTimeline = () => {
   };
 
   const getMusicForItem = (itemId: number) => {
-    // Map each special event item to its corresponding music file
+    // Map each special event item to its corresponding music file according to the specific order
     const musicMap: { [key: number]: string } = {
-      1: '/songs/special_events/Andy Williams - It\'s the Most Wonderful Time of the Year (Official Audio).mp3',
-      2: '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3',
-      3: '/songs/special_events/Felix Jaehn - Ain\'t Nobody (Loves Me Better) (Official Video) ft. Jasmine Thompson.mp3',
-      4: '/songs/special_events/Fly Project - Toca Toca  Official Music Video.mp3',
-      5: '/songs/special_events/Major Lazer & DJ Snake - Lean On (feat. MØ) [Official Lyric Video].mp3',
-      6: '/songs/special_events/Rihanna - We Found Love (Lyrics) ft. Calvin Harris.mp3',
-      7: '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3'
+      1: '/songs/special_events/Andy Williams - It\'s the Most Wonderful Time of the Year (Official Audio).mp3', // Serbare craciun
+      2: '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3', // Old mill
+      3: '/songs/special_events/Major Lazer & DJ Snake - Lean On (feat. MØ) [Official Lyric Video].mp3', // familie
+      4: '/songs/special_events/Fly Project - Toca Toca  Official Music Video.mp3', // majorat
+      5: '/songs/special_events/Rihanna - We Found Love (Lyrics) ft. Calvin Harris.mp3', // absolviri
+      // 6: iesiri dragi - no song (exception)
+      7: '/songs/special_events/Felix Jaehn - Ain\'t Nobody (Loves Me Better) (Official Video) ft. Jasmine Thompson.mp3' // ziua indragostitilor
     };
     
-    return musicMap[itemId] || '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3';
+    return musicMap[itemId]; // Return undefined for items without songs
   };
 
   return (

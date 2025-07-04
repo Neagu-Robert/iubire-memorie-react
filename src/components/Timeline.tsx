@@ -191,26 +191,24 @@ const Timeline = () => {
   };
 
   const getMusicForItem = (itemId: number) => {
-    // Map each timeline item to its corresponding music file
+    // Map each timeline item to its corresponding music file according to the specific order
     const musicMap: { [key: number]: string } = {
-      1: '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3',
-      2: '/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3',
-      3: '/songs/timeline/Lindsey Stirling - Carol of the Bells (Official Music Video).mp3',
-      4: '/songs/timeline/Mariah Carey - All I Want For Christmas Is You (Lyrics).mp3',
-      5: '/songs/timeline/Moves Like Jagger - Maroon 5 (Feat. Christina Aguilera) (Lyrics).mp3',
-      6: '/songs/timeline/Pitbull - Give Me Everything (Lyrics) Ft. Ne-Yo, Afrojack, Nayer.mp3',
-      7: '/songs/timeline/Pitbull - International Love (Lyrics) ft. Chris Brown.mp3',
-      8: '/songs/timeline/Sia - Cheap Thrills (Lyrics) ft. Sean Paul.mp3',
-      9: '/songs/timeline/Suzume no TojimariSuzumeTheme Song.mp3',
-      10: '/songs/timeline/VESCAN feat. Kamelia - Piesa mea preferata (Official Single).mp3',
-      11: '/songs/timeline/Zara Larsson - Lush Life.mp3',
-      12: '/songs/timeline/Green Day - Holiday (Official Audio).mp3',
-      13: '/songs/timeline/Lidia Buble feat. Amira - Le-am spus si fetelor (Official Video).mp3',
-      14: '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3',
-      15: '/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3'
+      1: '/songs/timeline/Green Day - Holiday (Official Audio).mp3', // prima excursie
+      2: '/songs/timeline/Suzume no TojimariSuzumeTheme Song.mp3', // prima vizita
+      3: '/songs/timeline/Lindsey Stirling - Carol of the Bells (Official Music Video).mp3', // festival craciun
+      4: '/songs/timeline/Zara Larsson - Lush Life.mp3', // piscina
+      5: '/songs/timeline/Moves Like Jagger - Maroon 5 (Feat. Christina Aguilera) (Lyrics).mp3', // excursie munte
+      7: '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3', // iesire rau
+      8: '/songs/timeline/Sia - Cheap Thrills (Lyrics) ft. Sean Paul.mp3', // concert filarmonic
+      9: '/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3', // festival medieval
+      11: '/songs/timeline/Lidia Buble feat. Amira - Le-am spus si fetelor (Official Video).mp3', // iesire cu cortul
+      12: '/songs/timeline/Pitbull - Give Me Everything (Lyrics) Ft. Ne-Yo, Afrojack, Nayer.mp3', // nunta
+      13: '/songs/timeline/Mariah Carey - All I Want For Christmas Is You (Lyrics).mp3', // Craciun impreuna
+      14: '/songs/timeline/Pitbull - International Love (Lyrics) ft. Chris Brown.mp3', // cabana munte
+      15: '/songs/timeline/VESCAN feat. Kamelia - Piesa mea preferata (Official Single).mp3' // buneii
     };
     
-    return musicMap[itemId] || '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3';
+    return musicMap[itemId]; // Return undefined for items without songs
   };
 
   return (
