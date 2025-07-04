@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import TimelineItem from "./TimelineItem";
+import PhotoCollectionViewer from "./PhotoCollectionViewer";
 
 const timelineData = [
   {
@@ -144,6 +145,7 @@ const timelineData = [
 const Timeline = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const [showPhotoViewer, setShowPhotoViewer] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -167,10 +169,48 @@ const Timeline = () => {
 
   const handleItemExpand = (id: number) => {
     setExpandedItem(id);
+    setShowPhotoViewer(true);
   };
 
   const handleCloseExpanded = () => {
     setExpandedItem(null);
+    setShowPhotoViewer(false);
+  };
+
+  const getCurrentItem = () => {
+    return timelineData.find(item => item.id === expandedItem);
+  };
+
+  const getPhotosForItem = (itemId: number) => {
+    // Placeholder photos - you can replace with actual photo data
+    return [1, 2, 3, 4, 5, 6].map(num => ({
+      id: num,
+      src: `/photos/timeline/item-${itemId}/photo-${num}.jpg`,
+      alt: `Fotografie ${num} din ${getCurrentItem()?.title || 'colecție'}`
+    }));
+  };
+
+  const getMusicForItem = (itemId: number) => {
+    // Map each timeline item to its corresponding music file
+    const musicMap: { [key: number]: string } = {
+      1: '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3',
+      2: '/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3',
+      3: '/songs/timeline/Lindsey Stirling - Carol of the Bells (Official Music Video).mp3',
+      4: '/songs/timeline/Mariah Carey - All I Want For Christmas Is You (Lyrics).mp3',
+      5: '/songs/timeline/Moves Like Jagger - Maroon 5 (Feat. Christina Aguilera) (Lyrics).mp3',
+      6: '/songs/timeline/Pitbull - Give Me Everything (Lyrics) Ft. Ne-Yo, Afrojack, Nayer.mp3',
+      7: '/songs/timeline/Pitbull - International Love (Lyrics) ft. Chris Brown.mp3',
+      8: '/songs/timeline/Sia - Cheap Thrills (Lyrics) ft. Sean Paul.mp3',
+      9: '/songs/timeline/Suzume no TojimariSuzumeTheme Song.mp3',
+      10: '/songs/timeline/VESCAN feat. Kamelia - Piesa mea preferata (Official Single).mp3',
+      11: '/songs/timeline/Zara Larsson - Lush Life.mp3',
+      12: '/songs/timeline/Green Day - Holiday (Official Audio).mp3',
+      13: '/songs/timeline/Lidia Buble feat. Amira - Le-am spus si fetelor (Official Video).mp3',
+      14: '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3',
+      15: '/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3'
+    };
+    
+    return musicMap[itemId] || '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3';
   };
 
   return (
@@ -230,52 +270,15 @@ const Timeline = () => {
         </div>
       </div>
 
-      {/* Expanded view overlay */}
-      {expandedItem && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{
-            background: `linear-gradient(135deg, ${timelineData
-              .find((item) => item.id === expandedItem)
-              ?.color.replace("from-", "")
-              .replace(" to-", ", ")})`,
-          }}
-        >
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={handleCloseExpanded}
-              className="float-right text-gray-500 hover:text-gray-700 text-2xl font-bold"
-            >
-              ✕
-            </button>
-            <div className="text-center">
-              <div className="text-6xl mb-4">
-                {timelineData.find((item) => item.id === expandedItem)?.icon}
-              </div>
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                {timelineData.find((item) => item.id === expandedItem)?.title}
-              </h3>
-              <p className="text-lg text-gray-700 mb-8">
-                {
-                  timelineData.find((item) => item.id === expandedItem)
-                    ?.description
-                }
-              </p>
-
-              {/* Placeholder for photo collection */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                {[1, 2, 3, 4, 5, 6].map((photo) => (
-                  <div
-                    key={photo}
-                    className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-500"
-                  >
-                    📸 Fotografie {photo}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Photo Collection Viewer */}
+      {showPhotoViewer && expandedItem && (
+        <PhotoCollectionViewer
+          photos={getPhotosForItem(expandedItem)}
+          title={getCurrentItem()?.title || ''}
+          description={getCurrentItem()?.description || ''}
+          musicSrc={getMusicForItem(expandedItem)}
+          onClose={handleCloseExpanded}
+        />
       )}
     </section>
   );

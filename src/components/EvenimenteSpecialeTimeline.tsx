@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import TimelineItem from "./TimelineItem";
+import PhotoCollectionViewer from "./PhotoCollectionViewer";
 
 const evenimenteData = [
   {
@@ -72,6 +73,7 @@ const evenimenteData = [
 const EvenimenteSpecialeTimeline = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const [showPhotoViewer, setShowPhotoViewer] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,14 +97,44 @@ const EvenimenteSpecialeTimeline = () => {
 
   const handleItemExpand = (id: number) => {
     setExpandedItem(id);
+    setShowPhotoViewer(true);
   };
 
   const handleCloseExpanded = () => {
     setExpandedItem(null);
+    setShowPhotoViewer(false);
   };
 
   const handleBackToHome = () => {
     navigate("/", { state: { fromFolder: true } });
+  };
+
+  const getCurrentItem = () => {
+    return evenimenteData.find(item => item.id === expandedItem);
+  };
+
+  const getPhotosForItem = (itemId: number) => {
+    // Placeholder photos - you can replace with actual photo data
+    return [1, 2, 3, 4, 5, 6].map(num => ({
+      id: num,
+      src: `/photos/special-events/item-${itemId}/photo-${num}.jpg`,
+      alt: `Fotografie ${num} din ${getCurrentItem()?.title || 'colecție'}`
+    }));
+  };
+
+  const getMusicForItem = (itemId: number) => {
+    // Map each special event item to its corresponding music file
+    const musicMap: { [key: number]: string } = {
+      1: '/songs/special_events/Andy Williams - It\'s the Most Wonderful Time of the Year (Official Audio).mp3',
+      2: '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3',
+      3: '/songs/special_events/Felix Jaehn - Ain\'t Nobody (Loves Me Better) (Official Video) ft. Jasmine Thompson.mp3',
+      4: '/songs/special_events/Fly Project - Toca Toca  Official Music Video.mp3',
+      5: '/songs/special_events/Major Lazer & DJ Snake - Lean On (feat. MØ) [Official Lyric Video].mp3',
+      6: '/songs/special_events/Rihanna - We Found Love (Lyrics) ft. Calvin Harris.mp3',
+      7: '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3'
+    };
+    
+    return musicMap[itemId] || '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3';
   };
 
   return (
@@ -160,52 +192,15 @@ const EvenimenteSpecialeTimeline = () => {
         </div>
       </div>
 
-      {/* Expanded view overlay */}
-      {expandedItem && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{
-            background: `linear-gradient(135deg, ${evenimenteData
-              .find((item) => item.id === expandedItem)
-              ?.color.replace("from-", "")
-              .replace(" to-", ", ")})`,
-          }}
-        >
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={handleCloseExpanded}
-              className="float-right text-gray-500 hover:text-gray-700 text-2xl font-bold"
-            >
-              ✕
-            </button>
-            <div className="text-center">
-              <div className="text-6xl mb-4">
-                {evenimenteData.find((item) => item.id === expandedItem)?.icon}
-              </div>
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                {evenimenteData.find((item) => item.id === expandedItem)?.title}
-              </h3>
-              <p className="text-lg text-gray-700 mb-8">
-                {
-                  evenimenteData.find((item) => item.id === expandedItem)
-                    ?.description
-                }
-              </p>
-
-              {/* Placeholder for photo collection */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                {[1, 2, 3, 4, 5, 6].map((photo) => (
-                  <div
-                    key={photo}
-                    className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-500"
-                  >
-                    📸 Fotografie {photo}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Photo Collection Viewer */}
+      {showPhotoViewer && expandedItem && (
+        <PhotoCollectionViewer
+          photos={getPhotosForItem(expandedItem)}
+          title={getCurrentItem()?.title || ''}
+          description={getCurrentItem()?.description || ''}
+          musicSrc={getMusicForItem(expandedItem)}
+          onClose={handleCloseExpanded}
+        />
       )}
     </section>
   );
