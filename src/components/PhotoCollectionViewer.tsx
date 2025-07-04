@@ -28,7 +28,7 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
   initialMode = 'selection'
 }) => {
   const [viewMode, setViewMode] = useState<'selection' | 'browse' | 'collage'>(
-    initialMode === 'browse' || initialMode === 'collage' ? initialMode : 'selection'
+    initialMode
   );
 
   const handleModeSelect = (mode: 'browse' | 'collage') => {
@@ -44,7 +44,7 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
       <div className="fixed inset-0 z-50 bg-black">
         <div className="absolute top-4 left-4 z-10">
           <button
-            onClick={handleBackToSelection}
+            onClick={onClose}
             className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
           >
             <X className="w-6 h-6" />
@@ -61,7 +61,7 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
         photos={photos}
         title={title}
         musicSrc={musicSrc}
-        onClose={handleBackToSelection}
+        onClose={onClose}
       />
     );
   }
