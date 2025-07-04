@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Folder, X } from 'lucide-react';
+import { Folder, X, Eye, Play } from 'lucide-react';
 
 interface TimelineItemProps {
   item: {
@@ -15,19 +15,18 @@ interface TimelineItemProps {
   isVisible: boolean;
   isLeft: boolean;
   onExpand: (id: number) => void;
+  hasMusic?: boolean;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isLeft, onExpand }) => {
+const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isLeft, onExpand, hasMusic = true }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
-    if (!isOpen) {
-      // First click: open the folder
-      setIsOpen(true);
-    } else {
-      // Second click: expand to full page
-      onExpand(item.id);
-    }
+    setIsOpen(true);
+  };
+
+  const handleViewPhotos = (mode: 'browse' | 'collage') => {
+    onExpand(item.id);
   };
 
   return (
@@ -53,7 +52,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
           className={`group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden ${
             isOpen ? 'shadow-2xl' : ''
           }`}
-          onClick={handleToggle}
+          onClick={!isOpen ? handleToggle : undefined}
         >
           {/* Folder tab */}
           <div className={`relative bg-gradient-to-r ${item.color} p-4 transition-all duration-300 ${
@@ -94,20 +93,38 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
 
           {/* Folder content */}
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
-            isOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+            isOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
           }`}>
             <div className="p-6 bg-white relative">
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 leading-relaxed mb-6">
                 {item.description}
               </p>
-              <div className="mt-4 text-sm text-gray-500">
-                Apasă din nou pentru a vedea colecția de fotografii
+              
+              {/* Two buttons for viewing options */}
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleViewPhotos('browse')}
+                  className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border-2 border-blue-200"
+                >
+                  <Eye className="w-6 h-6 text-blue-600" />
+                  <span className="text-blue-600 font-semibold text-center text-sm">Vezi pozele normal</span>
+                </button>
+
+                {hasMusic && (
+                  <button
+                    onClick={() => handleViewPhotos('collage')}
+                    className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors border-2 border-purple-200"
+                  >
+                    <Play className="w-6 h-6 text-purple-600" />
+                    <span className="text-purple-600 font-semibold text-center text-sm">Vezi cu melodie surpriză</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
 
           {/* Subtle animation overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}></div>
+          <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none ${isOpen ? 'pointer-events-auto' : ''}`}></div>
         </div>
       </div>
     </div>

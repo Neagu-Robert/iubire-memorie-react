@@ -137,6 +137,10 @@ const EvenimenteSpecialeTimeline = () => {
     return musicMap[itemId]; // Return undefined for items without songs
   };
 
+  const hasMusic = (itemId: number) => {
+    return getMusicForItem(itemId) !== undefined;
+  };
+
   return (
     <section id="timeline" className="min-h-screen py-20">
       <div className="max-w-4xl mx-auto px-4">
@@ -176,6 +180,7 @@ const EvenimenteSpecialeTimeline = () => {
                 isVisible={visibleItems.includes(item.id)}
                 isLeft={index % 2 === 0}
                 onExpand={handleItemExpand}
+                hasMusic={hasMusic(item.id)}
               />
             ))}
           </div>
