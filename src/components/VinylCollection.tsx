@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { ChevronLeft, ChevronRight, X, Play, Pause, Shuffle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Play, Pause, Shuffle, Volume2 } from 'lucide-react';
 import { useMusic } from '../contexts/MusicContext';
+import { Slider } from './ui/slider';
 import AnimatedPlaylist from './AnimatedPlaylist';
 
 interface VinylCollectionProps {
@@ -18,7 +19,9 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
     shuffleSong,
     audioRef,
     currentSongIndex,
-    songs
+    songs,
+    volume,
+    setVolume
   } = useMusic();
 
   const togglePlay = () => {
@@ -32,6 +35,10 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
         }).catch(console.error);
       }
     }
+  };
+
+  const handleVolumeChange = (value: number[]) => {
+    setVolume(value[0] / 100);
   };
 
   if (!isOpen) return null;
@@ -75,7 +82,7 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
           </button>
         </div>
 
-        {/* Navigation controls */}
+        {/* Navigation controls with volume */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-8">
           <button
             onClick={playPreviousSong}
@@ -96,6 +103,20 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
           >
             <ChevronRight className="w-6 h-6" />
           </button>
+
+          {/* Volume Control */}
+          <div className="flex items-center gap-2 ml-4">
+            <Volume2 className="w-5 h-5 text-amber-200" />
+            <div className="w-20">
+              <Slider
+                value={[volume * 100]}
+                onValueChange={handleVolumeChange}
+                max={100}
+                step={1}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

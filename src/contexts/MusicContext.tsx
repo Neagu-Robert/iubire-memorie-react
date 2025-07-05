@@ -14,10 +14,12 @@ interface MusicContextType {
   currentSongIndex: number;
   isPlaying: boolean;
   isVinylCollectionOpen: boolean;
+  volume: number;
   audioRef: React.RefObject<HTMLAudioElement>;
   setCurrentSongIndex: (index: number) => void;
   setIsPlaying: (playing: boolean) => void;
   setIsVinylCollectionOpen: (open: boolean) => void;
+  setVolume: (volume: number) => void;
   playNextSong: () => void;
   playPreviousSong: () => void;
   shuffleSong: () => void;
@@ -188,6 +190,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isVinylCollectionOpen, setIsVinylCollectionOpen] = useState(false);
+  const [volume, setVolume] = useState(0.7);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const playNextSong = () => {
@@ -220,22 +223,37 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Handle song changes
   useEffect(() => {
     if (audioRef.current && songs[currentSongIndex]) {
-      audioRef.current.src = songs[currentSongIndex].src;
-      if (isPlaying) {
-        audioRef.current.play().catch(console.error);
+      const wasPlaying = isPlaying;
+      const currentTime = audioRef.current.currentTime;
+      
+      // Only change src if it's a different song
+      if (audioRef.current.src !== songs[currentSongIndex].src) {
+        audioRef.current.src = songs[currentSongIndex].src;
+        if (wasPlaying) {
+          audioRef.current.play().catch(console.error);
+        }
       }
     }
-  }, [currentSongIndex, isPlaying]);
+  }, [currentSongIndex]);
+
+  // Handle volume changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   const value = {
     songs,
     currentSongIndex,
     isPlaying,
     isVinylCollectionOpen,
+    volume,
     audioRef,
     setCurrentSongIndex,
     setIsPlaying,
     setIsVinylCollectionOpen,
+    setVolume,
     playNextSong,
     playPreviousSong,
     shuffleSong,
