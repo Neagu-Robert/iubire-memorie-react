@@ -1,7 +1,13 @@
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
+import VintageMusicPlayer from "../components/VintageMusicPlayer";
+import VinylCollection from "../components/VinylCollection";
+import { useMusic } from "../contexts/MusicContext";
 
 const TimelinePage = () => {
+  const { isVinylCollectionOpen, setIsVinylCollectionOpen } = useMusic();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -18,6 +24,13 @@ const TimelinePage = () => {
       }}
     >
       <Timeline />
+      
+      {/* Music Player */}
+      <VintageMusicPlayer onOpen={() => setIsVinylCollectionOpen(true)} />
+      <VinylCollection
+        isOpen={isVinylCollectionOpen}
+        onClose={() => setIsVinylCollectionOpen(false)}
+      />
     </div>
   );
 };

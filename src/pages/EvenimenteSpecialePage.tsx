@@ -1,7 +1,13 @@
+
 import React, { useEffect } from "react";
 import EvenimenteSpecialeTimeline from "../components/EvenimenteSpecialeTimeline";
+import VintageMusicPlayer from "../components/VintageMusicPlayer";
+import VinylCollection from "../components/VinylCollection";
+import { useMusic } from "../contexts/MusicContext";
 
 const EvenimenteSpecialePage = () => {
+  const { isVinylCollectionOpen, setIsVinylCollectionOpen } = useMusic();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -18,6 +24,13 @@ const EvenimenteSpecialePage = () => {
       }}
     >
       <EvenimenteSpecialeTimeline />
+      
+      {/* Music Player */}
+      <VintageMusicPlayer onOpen={() => setIsVinylCollectionOpen(true)} />
+      <VinylCollection
+        isOpen={isVinylCollectionOpen}
+        onClose={() => setIsVinylCollectionOpen(false)}
+      />
     </div>
   );
 };

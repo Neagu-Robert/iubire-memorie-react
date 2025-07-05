@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { X, Play, Pause, RotateCcw } from "lucide-react";
+import { useMusic } from "../contexts/MusicContext";
 
 interface Photo {
   id: number;
@@ -25,10 +27,16 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Use global music context
+  const globalMusic = useMusic();
 
   useEffect(() => {
     // Auto-start music when component loads (only if musicSrc exists)
     if (audioRef.current && musicSrc) {
+      // Pause global music when collage starts
+      globalMusic.pauseMusic();
+      
       audioRef.current.volume = 0.7;
       audioRef.current
         .play()
@@ -38,12 +46,13 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
         .catch(console.error);
     } else if (musicSrc) {
       // If we have music but audio element isn't ready yet, start playing anyway
+      globalMusic.pauseMusic();
       setIsPlaying(true);
     } else {
       // If no music, start the slideshow anyway
       setIsPlaying(true);
     }
-  }, [musicSrc]);
+  }, [musicSrc, globalMusic]);
 
   useEffect(() => {
     if (isPlaying && photos.length > 1) {
@@ -69,6 +78,8 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
+        // Pause global music when resuming collage music
+        globalMusic.pauseMusic();
         audioRef.current
           .play()
           .then(() => {
@@ -85,6 +96,7 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
   const restartCollage = () => {
     setCurrentPhotoIndex(0);
     if (audioRef.current && musicSrc) {
+      globalMusic.pauseMusic();
       audioRef.current.currentTime = 0;
       audioRef.current
         .play()

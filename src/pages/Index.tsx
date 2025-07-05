@@ -7,15 +7,18 @@ import VinylCollection from "../components/VinylCollection";
 import { useLocation } from "react-router-dom";
 import { ChevronUp } from "lucide-react";
 import "../index.css";
+import { useMusic } from "../contexts/MusicContext";
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isVinylCollectionOpen, setIsVinylCollectionOpen] = useState(false);
   const [showFolders, setShowFolders] = useState(false);
   const [heroAnim, setHeroAnim] = useState("");
   const [foldersAnim, setFoldersAnim] = useState("");
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Use music context
+  const { isVinylCollectionOpen, setIsVinylCollectionOpen } = useMusic();
 
   useEffect(() => {
     setIsLoaded(true);
