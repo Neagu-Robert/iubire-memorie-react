@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Play, Pause, RotateCcw } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import { X, Play, Pause, RotateCcw } from "lucide-react";
 
 interface Photo {
   id: number;
@@ -11,15 +10,15 @@ interface Photo {
 interface AnimatedCollageProps {
   photos: Photo[];
   title: string;
-  musicSrc: string;
+  musicSrc?: string;
   onClose: () => void;
 }
 
-const AnimatedCollage: React.FC<AnimatedCollageProps> = ({ 
-  photos, 
-  title, 
-  musicSrc, 
-  onClose 
+const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
+  photos,
+  title,
+  musicSrc,
+  onClose,
 }) => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,14 +27,23 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Auto-start music when component loads
-    if (audioRef.current) {
+    // Auto-start music when component loads (only if musicSrc exists)
+    if (audioRef.current && musicSrc) {
       audioRef.current.volume = 0.7;
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(console.error);
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch(console.error);
+    } else if (musicSrc) {
+      // If we have music but audio element isn't ready yet, start playing anyway
+      setIsPlaying(true);
+    } else {
+      // If no music, start the slideshow anyway
+      setIsPlaying(true);
     }
-  }, []);
+  }, [musicSrc]);
 
   useEffect(() => {
     if (isPlaying && photos.length > 1) {
@@ -56,25 +64,36 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
   }, [isPlaying, photos.length]);
 
   const togglePlayPause = () => {
-    if (audioRef.current) {
+    if (audioRef.current && musicSrc) {
       if (isPlaying) {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(console.error);
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(console.error);
       }
+    } else {
+      // If no music, just toggle the slideshow
+      setIsPlaying(!isPlaying);
     }
   };
 
   const restartCollage = () => {
     setCurrentPhotoIndex(0);
-    if (audioRef.current) {
+    if (audioRef.current && musicSrc) {
       audioRef.current.currentTime = 0;
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(console.error);
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch(console.error);
+    } else {
+      setIsPlaying(true);
     }
   };
 
@@ -108,12 +127,23 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
         {/* Photo Display */}
         <div className="relative w-full h-full flex items-center justify-center bg-gray-900">
           {photos.length > 0 && (
-            <div 
+            <div
               className={`absolute inset-0 transition-opacity duration-300 ${
-                isTransitioning ? 'opacity-0' : 'opacity-100'
+                isTransitioning ? "opacity-0" : "opacity-100"
               }`}
             >
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <img
+                src={photos[currentPhotoIndex].src}
+                alt={photos[currentPhotoIndex].alt}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  target.nextElementSibling?.classList.remove("hidden");
+                }}
+              />
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center hidden">
                 <span className="text-gray-500 text-lg">
                   {photos[currentPhotoIndex].alt}
                 </span>
@@ -149,13 +179,10 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
           </div>
         </div>
 
-        {/* Hidden Audio Element */}
-        <audio
-          ref={audioRef}
-          src={musicSrc}
-          loop
-          preload="auto"
-        />
+        {/* Hidden Audio Element - only render if musicSrc exists */}
+        {musicSrc && (
+          <audio ref={audioRef} src={musicSrc} loop preload="auto" />
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { X } from 'lucide-react';
-import PhotoStack from './PhotoStack';
-import AnimatedCollage from './AnimatedCollage';
+import React from "react";
+import { X } from "lucide-react";
+import PhotoStack from "./PhotoStack";
+import AnimatedCollage from "./AnimatedCollage";
 
 interface Photo {
   id: number;
@@ -16,7 +15,7 @@ interface PhotoCollectionViewerProps {
   description: string;
   musicSrc?: string;
   onClose: () => void;
-  mode: 'browse' | 'collage';
+  mode: "browse" | "collage";
 }
 
 const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
@@ -25,9 +24,9 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
   description,
   musicSrc,
   onClose,
-  mode
+  mode,
 }) => {
-  if (mode === 'browse') {
+  if (mode === "browse") {
     return (
       <div className="fixed inset-0 z-50 bg-black">
         <div className="absolute top-4 left-4 z-10">
@@ -43,7 +42,7 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
     );
   }
 
-  if (mode === 'collage' && musicSrc) {
+  if (mode === "collage") {
     return (
       <AnimatedCollage
         photos={photos}

@@ -98,7 +98,18 @@ const PhotoStack: React.FC<PhotoStackProps> = ({ photos }) => {
               }}
             >
               <div className="w-full h-full bg-white rounded-lg shadow-2xl overflow-hidden border-8 border-white">
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to placeholder if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                    target.nextElementSibling?.classList.remove("hidden");
+                  }}
+                />
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center hidden">
                   <span className="text-gray-500 text-lg">{photo.alt}</span>
                 </div>
               </div>

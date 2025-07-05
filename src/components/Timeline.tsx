@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
@@ -149,7 +148,7 @@ const Timeline = () => {
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
   const [showModeSelector, setShowModeSelector] = useState(false);
   const [showPhotoViewer, setShowPhotoViewer] = useState(false);
-  const [viewMode, setViewMode] = useState<'browse' | 'collage'>('browse');
+  const [viewMode, setViewMode] = useState<"browse" | "collage">("browse");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -171,16 +170,14 @@ const Timeline = () => {
     return () => observer.disconnect();
   }, []);
 
-  const handleItemExpand = (id: number, mode: 'browse' | 'collage') => {
-    console.log('Timeline: handleItemExpand called with id:', id, 'mode:', mode);
+  const handleItemExpand = (id: number, mode: "browse" | "collage") => {
     setExpandedItem(id);
     setViewMode(mode);
     setShowPhotoViewer(true);
     setShowModeSelector(false);
   };
 
-  const handleModeSelect = (mode: 'browse' | 'collage') => {
-    console.log('Timeline: handleModeSelect called with mode:', mode);
+  const handleModeSelect = (mode: "browse" | "collage") => {
     setViewMode(mode);
     setShowModeSelector(false);
     setShowPhotoViewer(true);
@@ -193,36 +190,36 @@ const Timeline = () => {
   };
 
   const getCurrentItem = () => {
-    return timelineData.find(item => item.id === expandedItem);
+    return timelineData.find((item) => item.id === expandedItem);
   };
 
   const getPhotosForItem = (itemId: number) => {
     // Placeholder photos - you can replace with actual photo data
-    return [1, 2, 3, 4, 5, 6].map(num => ({
+    return [1, 2, 3, 4, 5, 6].map((num) => ({
       id: num,
-      src: `/photos/timeline/item-${itemId}/photo-${num}.jpg`,
-      alt: `Fotografie ${num} din ${getCurrentItem()?.title || 'colecție'}`
+      src: `https://picsum.photos/800/600?random=${itemId}${num}`, // Using placeholder images
+      alt: `Fotografie ${num} din ${getCurrentItem()?.title || "colecție"}`,
     }));
   };
 
   const getMusicForItem = (itemId: number) => {
     // Map each timeline item to its corresponding music file according to the specific order
     const musicMap: { [key: number]: string } = {
-      1: '/songs/timeline/Green Day - Holiday (Official Audio).mp3', // prima excursie
-      2: '/songs/timeline/Suzume no TojimariSuzumeTheme Song.mp3', // prima vizita
-      3: '/songs/timeline/Lindsey Stirling - Carol of the Bells (Official Music Video).mp3', // festival craciun
-      4: '/songs/timeline/Zara Larsson - Lush Life.mp3', // piscina
-      5: '/songs/timeline/Moves Like Jagger - Maroon 5 (Feat. Christina Aguilera) (Lyrics).mp3', // excursie munte
-      7: '/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3', // iesire rau
-      8: '/songs/timeline/Sia - Cheap Thrills (Lyrics) ft. Sean Paul.mp3', // concert filarmonic
-      9: '/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3', // festival medieval
-      11: '/songs/timeline/Lidia Buble feat. Amira - Le-am spus si fetelor (Official Video).mp3', // iesire cu cortul
-      12: '/songs/timeline/Pitbull - Give Me Everything (Lyrics) Ft. Ne-Yo, Afrojack, Nayer.mp3', // nunta
-      13: '/songs/timeline/Mariah Carey - All I Want For Christmas Is You (Lyrics).mp3', // Craciun impreuna
-      14: '/songs/timeline/Pitbull - International Love (Lyrics) ft. Chris Brown.mp3', // cabana munte
-      15: '/songs/timeline/VESCAN feat. Kamelia - Piesa mea preferata (Official Single).mp3' // buneii
+      1: "/songs/timeline/Green Day - Holiday (Official Audio).mp3", // prima excursie
+      2: "/songs/timeline/Suzume no TojimariSuzumeTheme Song.mp3", // prima vizita
+      3: "/songs/timeline/Lindsey Stirling - Carol of the Bells (Official Music Video).mp3", // festival craciun
+      4: "/songs/timeline/Zara Larsson - Lush Life.mp3", // piscina
+      5: "/songs/timeline/Moves Like Jagger - Maroon 5 (Feat. Christina Aguilera) (Lyrics).mp3", // excursie munte
+      7: "/songs/timeline/DNCE - Cake By The Ocean (Lyrics).mp3", // iesire rau
+      8: "/songs/timeline/Sia - Cheap Thrills (Lyrics) ft. Sean Paul.mp3", // concert filarmonic
+      9: "/songs/timeline/Fall Out Boy - Irresistible (Audio).mp3", // festival medieval
+      11: "/songs/timeline/Lidia Buble feat. Amira - Le-am spus si fetelor (Official Video).mp3", // iesire cu cortul
+      12: "/songs/timeline/Pitbull - Give Me Everything (Lyrics) Ft. Ne-Yo, Afrojack, Nayer.mp3", // nunta
+      13: "/songs/timeline/Mariah Carey - All I Want For Christmas Is You (Lyrics).mp3", // Craciun impreuna
+      14: "/songs/timeline/Pitbull - International Love (Lyrics) ft. Chris Brown.mp3", // cabana munte
+      15: "/songs/timeline/VESCAN feat. Kamelia - Piesa mea preferata (Official Single).mp3", // buneii
     };
-    
+
     return musicMap[itemId]; // Return undefined for items without songs
   };
 
@@ -291,8 +288,8 @@ const Timeline = () => {
       {/* Mode Selector */}
       {showModeSelector && expandedItem && (
         <ModeSelector
-          title={getCurrentItem()?.title || ''}
-          description={getCurrentItem()?.description || ''}
+          title={getCurrentItem()?.title || ""}
+          description={getCurrentItem()?.description || ""}
           hasMusic={hasMusic(expandedItem)}
           onModeSelect={handleModeSelect}
           onClose={handleCloseAll}
@@ -303,8 +300,8 @@ const Timeline = () => {
       {showPhotoViewer && expandedItem && (
         <PhotoCollectionViewer
           photos={getPhotosForItem(expandedItem)}
-          title={getCurrentItem()?.title || ''}
-          description={getCurrentItem()?.description || ''}
+          title={getCurrentItem()?.title || ""}
+          description={getCurrentItem()?.description || ""}
           musicSrc={getMusicForItem(expandedItem)}
           onClose={handleCloseAll}
           mode={viewMode}
