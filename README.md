@@ -1,3 +1,4 @@
+
 # 💖 Personal Birthday Surprise Website
 
 <!--
@@ -23,8 +24,9 @@ This is a personal surprise birthday website created as a romantic gift for a gi
 - **Vinyl Collection & Vintage Music Player**: Floating vintage music player button with spinning animation opens a vinyl collection overlay, letting you browse and play romantic songs with animated vinyl stack transitions, play/pause, shuffle, and navigation controls
 - **Circular Gallery**: A unique gallery experience with 83 moments organized into 9 themed events, displayed in a horizontal arch with smooth navigation, event-based grouping, mouse wheel navigation, image enlargement modal, and an animated 'peek cat' at the bottom
 - **Personal Favorites (PhotoStack)**: Dedicated page for favorite photos, featuring a draggable, animated stack-like photo browser with smooth transitions and navigation dots
-- **Relationship Timeline**: 15 relationship milestones with two-step folder interaction (open folder, then expand to overlay with photos), subtle folder animations, close button, and gradient overlays
-- **Special Events Timeline**: Separate timeline for holidays, birthdays, and other special occasions, with expandable overlay for each event, gradient backgrounds, and placeholder photo collection grid
+- **Relationship Timeline**: 15 relationship milestones with two-step folder interaction (open folder, then choose viewing mode), mode selector overlay for choosing between normal browsing or animated collage with music, photo collection viewer with different display modes, and gradient overlays
+- **Special Events Timeline**: Separate timeline for holidays, birthdays, and other special occasions, with expandable overlay for each event, mode selector for viewing options, animated collage with music support, and gradient backgrounds
+- **Photo Viewing System**: Dual-mode photo viewing with normal browsing (PhotoStack component) and animated collage mode with synchronized music playback, auto-advancing slideshow, and playback controls
 - **Smooth Animations**: Scroll indicators, staggered reveals, folder transitions, interactive cat effects, new gallery/music player animations, and playful cat video overlays
 - **Responsive Design**: Mobile-friendly layout that works on all devices
 - **Romanian Language**: All text content is in Romanian for a personal touch
@@ -39,12 +41,15 @@ src/
 │   ├── InteractiveCat.tsx        # Playful cat that interacts with the cursor
 │   ├── AnimatedCat.tsx           # (Optional) Cat that follows the cursor around the screen
 │   ├── Timeline.tsx              # Main timeline container with all relationship memories
-│   ├── TimelineItem.tsx          # Individual memory item with folder animation
+│   ├── TimelineItem.tsx          # Individual memory item with folder animation and mode selection
 │   ├── EvenimenteSpecialeTimeline.tsx # Timeline for special events (holidays, birthdays, etc.)
+│   ├── ModeSelector.tsx          # Modal for choosing between browse and collage modes
+│   ├── PhotoCollectionViewer.tsx # Main photo viewer component handling both browse and collage modes
+│   ├── AnimatedCollage.tsx       # Animated slideshow with music synchronization
 │   ├── VinylCollection.tsx       # Vinyl record collection overlay with music controls
 │   ├── VintageMusicPlayer.tsx    # Floating vintage music player button
 │   ├── CircularGallery.tsx       # Circular gallery with themed events and arch navigation
-│   ├── PhotoStack.tsx            # Draggable stack photo browser for favorites
+│   ├── PhotoStack.tsx            # Draggable stack photo browser for normal browsing
 │   └── ui/                       # Reusable UI component library (carousel, chart, sidebar, etc.)
 ├── pages/
 │   ├── Index.tsx                 # Main page combining Hero, FolderCards, and InteractiveCat
@@ -65,10 +70,13 @@ src/
 - **VinylCollection.tsx**: Interactive vinyl record collection overlay with play/pause, shuffle, animated vinyl stack transitions, and navigation controls
 - **VintageMusicPlayer.tsx**: Floating button with spinning animation that opens the Vinyl Collection overlay
 - **CircularGallery.tsx**: Gallery of 83 moments in 9 themed events, with horizontal arch navigation, event grouping, mouse wheel navigation, image enlargement modal, and animated 'peek cat' at the bottom
-- **PhotoStack.tsx**: Draggable, animated stack of photos for the Personal Favorites page, with navigation dots
-- **Timeline.tsx**: Container for 15 relationship milestones with intersection observer for animations, two-step folder interaction, and expandable overlay with gradient background and photo collection grid
-- **TimelineItem.tsx**: Reusable component for each memory with folder-opening animation, two-step interaction, and close button
-- **EvenimenteSpecialeTimeline.tsx**: Special timeline for holidays, birthdays, and other events, with expandable overlay, gradient backgrounds, and photo collection grid
+- **PhotoStack.tsx**: Draggable, animated stack of photos for normal browsing mode, with navigation dots and smooth transitions
+- **Timeline.tsx**: Container for 15 relationship milestones with intersection observer for animations, two-step folder interaction, mode selection, and photo viewing integration
+- **TimelineItem.tsx**: Reusable component for each memory with folder-opening animation, two viewing mode buttons (normal and collage), and event handling
+- **EvenimenteSpecialeTimeline.tsx**: Special timeline for holidays, birthdays, and other events, with mode selection and photo viewing capabilities
+- **ModeSelector.tsx**: Modal overlay component for choosing between "Vezi pozele normal" (normal browsing) and "Vezi cu melodie surpriză" (animated collage with music)
+- **PhotoCollectionViewer.tsx**: Main photo viewing component that handles both browse mode (using PhotoStack) and collage mode (using AnimatedCollage)
+- **AnimatedCollage.tsx**: Full-screen animated slideshow component with music synchronization, auto-advancing photos, play/pause controls, and restart functionality
 - **Index.tsx**: Main page orchestrating the Hero, FolderCards, InteractiveCat, VintageMusicPlayer, and VinylCollection
 - **ui/**: Library of reusable UI components (carousel, chart, sidebar, etc.) for extensibility and consistent design
 
@@ -86,15 +94,15 @@ src/
 - Gradient backgrounds (purple to violet theme)
 - Smooth CSS transitions and animations
 - Responsive design with mobile-first approach
-- Custom animations for folder-opening, timeline reveals, interactive cat effects, vinyl/music player, and galleries
+- Custom animations for folder-opening, timeline reveals, interactive cat effects, vinyl/music player, photo viewing modes, and galleries
 
 ## 🎨 Design Philosophy
 
 - **Romantic & Elegant**: Warm purple/pink color palette with soft gradients
 - **Interactive**: Engaging animations that reveal content progressively
-- **Playful**: Animated cat, vinyl music player, and folder/gallery interactions for a fun, memorable experience
-- **Personal**: Customized content celebrating relationship milestones and favorite moments
-- **Smooth UX**: Seamless transitions and scroll behaviors
+- **Playful**: Animated cat, vinyl music player, dual-mode photo viewing, and folder/gallery interactions for a fun, memorable experience
+- **Personal**: Customized content celebrating relationship milestones and favorite moments with personalized music selections
+- **Smooth UX**: Seamless transitions, scroll behaviors, and intuitive mode switching
 
 ## 🎯 Timeline & Gallery Content Structure
 
@@ -106,9 +114,10 @@ src/
   - Personal description
   - Date/occasion reference
   - Custom gradient color scheme
-  - Two-step folder interaction (open folder, then expand to overlay with photos)
-  - Folder-opening and photo collection animation
-  - Expandable overlay with gradient background and placeholder photo collection grid
+  - Two-step interaction: open folder, then choose viewing mode
+  - Mode selection between normal browsing and animated collage
+  - Music integration for collage mode (specific songs mapped to each milestone)
+  - Photo collection viewer with smooth transitions
 
 ### Special Events Timeline
 
@@ -116,7 +125,24 @@ src/
 - Each event includes:
   - Emoji icon
   - Title, description, date
-  - Expandable overlay with gradient background and photo collection grid
+  - Mode selection for photo viewing
+  - Music support for applicable events
+  - Animated collage option with synchronized music
+
+### Photo Viewing Modes
+
+1. **Normal Browsing ("Vezi pozele normal")**:
+   - Uses PhotoStack component
+   - Draggable, tactile photo navigation
+   - Navigation dots for easy browsing
+   - Smooth transitions between photos
+
+2. **Animated Collage ("Vezi cu melodie surpriză")**:
+   - Full-screen slideshow experience
+   - Automatic photo advancement synchronized with music
+   - Play/pause and restart controls
+   - Volume control and music loop functionality
+   - Smooth fade transitions between photos
 
 ### Circular Gallery
 
@@ -138,6 +164,7 @@ src/
 - Floating vintage music player button (bottom-right) with spinning animation
 - Opens a vinyl collection overlay with animated vinyl stack transitions
 - Play/pause, shuffle, and song navigation controls
+- Integration with timeline and special events for contextual music
 
 ## 🚀 Development Commands
 
@@ -158,7 +185,7 @@ npm run preview
 ## 📱 Responsive Features
 
 - Mobile-optimized timeline, gallery, and folder layout
-- Touch-friendly interactive elements (PhotoStack, galleries, music player)
+- Touch-friendly interactive elements (PhotoStack, galleries, music player, mode selection)
 - Adaptive typography scaling
 - Flexible grid systems for different screen sizes
 - Background images and playful cat video overlays for added atmosphere
@@ -168,14 +195,23 @@ npm run preview
 - **Hero animations**: Staggered text reveals with smooth opacity/transform transitions and animated background elements
 - **Scroll indicator**: Bouncing arrow animation with smooth scroll behavior
 - **Timeline reveals**: Intersection Observer triggers for progressive content loading
-- **Folder animations**: CSS transforms creating folder-opening effect on click, two-step interaction, and photo collection expansion
-- **Timeline overlays**: Expandable overlays with gradient backgrounds and photo collection grids for each event
+- **Folder animations**: CSS transforms creating folder-opening effect on click, two-step interaction, and mode selection
+- **Photo viewing transitions**: Smooth mode switching between normal browsing and animated collage
+- **Music synchronization**: Auto-advancing slideshow synchronized with music playback in collage mode
 - **Cat animations**: Interactive SVG cat swats at or follows the cursor, with idle/chasing states, animated tail/paw/eyes, and 'love cat' video animation on hover
 - **Vinyl/music player**: Animated vinyl stack transitions, floating player button with spinning animation, and interactive controls
 - **Circular gallery**: Arch navigation, event grouping, mouse wheel navigation, image enlargement modal, and animated 'peek cat' at the bottom
-- **PhotoStack**: Draggable, animated stack of photos for a playful experience, with navigation dots
+- **PhotoStack**: Draggable, animated stack of photos for a playful browsing experience, with navigation dots
 - **Background elements**: Subtle floating animations, background images, and playful cat video overlays for ambient atmosphere
+
+## 🎵 Music Integration
+
+- **Timeline Music Mapping**: Each timeline milestone has a specific song mapped to it for the animated collage mode
+- **Special Events Music**: Selected special events have associated music for enhanced viewing experience
+- **Music Controls**: Play/pause, restart, and volume controls in animated collage mode
+- **Auto-sync**: Photos advance automatically in rhythm with the music playback
+- **Fallback Handling**: Events without music only show the normal browsing option
 
 ---
 
-_This project represents a personal labor of love, designed to celebrate relationship memories in a beautiful, interactive, and playful format._
+_This project represents a personal labor of love, designed to celebrate relationship memories in a beautiful, interactive, and playful format with personalized music and dual-mode photo viewing experiences._
