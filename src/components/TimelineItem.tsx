@@ -18,7 +18,14 @@ interface TimelineItemProps {
   hasMusic?: boolean;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isLeft, onExpand, hasMusic = true }) => {
+const TimelineItem: React.FC<TimelineItemProps> = ({ 
+  item, 
+  index, 
+  isVisible, 
+  isLeft, 
+  onExpand, 
+  hasMusic = true 
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
@@ -26,7 +33,13 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
   };
 
   const handleViewPhotos = (mode: 'browse' | 'collage') => {
+    console.log('TimelineItem: handleViewPhotos called with mode:', mode, 'for item:', item.id);
     onExpand(item.id, mode);
+  };
+
+  const handleClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(false);
   };
 
   return (
@@ -45,9 +58,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
       </div>
 
       {/* Content */}
-      <div className={`w-full max-w-md ${isLeft ? 'pr-8' : 'pl-8'}`}
-        style={{ position: 'relative' }}
-      >
+      <div className={`w-full max-w-md ${isLeft ? 'pr-8' : 'pl-8'}`}>
         <div
           className={`group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden ${
             isOpen ? 'shadow-2xl' : ''
@@ -75,10 +86,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
                 {isOpen && (
                   <button
                     className="text-black hover:text-gray-700 z-20"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setIsOpen(false);
-                    }}
+                    onClick={handleClose}
                     aria-label="Închide folderul"
                   >
                     <X className="w-5 h-5" />
@@ -105,6 +113,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    console.log('Browse button clicked for item:', item.id);
                     handleViewPhotos('browse');
                   }}
                   className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border-2 border-blue-200"
@@ -117,6 +126,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, isVisible, isL
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      console.log('Collage button clicked for item:', item.id);
                       handleViewPhotos('collage');
                     }}
                     className="flex-1 flex flex-col items-center justify-center space-y-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors border-2 border-purple-200"

@@ -1,7 +1,9 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import TimelineItem from "./TimelineItem";
+import ModeSelector from "./ModeSelector";
 import PhotoCollectionViewer from "./PhotoCollectionViewer";
 
 const evenimenteData = [
@@ -73,6 +75,7 @@ const evenimenteData = [
 const EvenimenteSpecialeTimeline = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const [showModeSelector, setShowModeSelector] = useState(false);
   const [showPhotoViewer, setShowPhotoViewer] = useState(false);
   const [viewMode, setViewMode] = useState<'browse' | 'collage'>('browse');
   const navigate = useNavigate();
@@ -97,14 +100,24 @@ const EvenimenteSpecialeTimeline = () => {
   }, []);
 
   const handleItemExpand = (id: number, mode: 'browse' | 'collage') => {
+    console.log('EvenimenteSpeciale: handleItemExpand called with id:', id, 'mode:', mode);
     setExpandedItem(id);
     setViewMode(mode);
     setShowPhotoViewer(true);
+    setShowModeSelector(false);
   };
 
-  const handleCloseExpanded = () => {
+  const handleModeSelect = (mode: 'browse' | 'collage') => {
+    console.log('EvenimenteSpeciale: handleModeSelect called with mode:', mode);
+    setViewMode(mode);
+    setShowModeSelector(false);
+    setShowPhotoViewer(true);
+  };
+
+  const handleCloseAll = () => {
     setExpandedItem(null);
     setShowPhotoViewer(false);
+    setShowModeSelector(false);
   };
 
   const handleBackToHome = () => {
@@ -199,6 +212,17 @@ const EvenimenteSpecialeTimeline = () => {
         </div>
       </div>
 
+      {/* Mode Selector */}
+      {showModeSelector && expandedItem && (
+        <ModeSelector
+          title={getCurrentItem()?.title || ''}
+          description={getCurrentItem()?.description || ''}
+          hasMusic={hasMusic(expandedItem)}
+          onModeSelect={handleModeSelect}
+          onClose={handleCloseAll}
+        />
+      )}
+
       {/* Photo Collection Viewer */}
       {showPhotoViewer && expandedItem && (
         <PhotoCollectionViewer
@@ -206,8 +230,8 @@ const EvenimenteSpecialeTimeline = () => {
           title={getCurrentItem()?.title || ''}
           description={getCurrentItem()?.description || ''}
           musicSrc={getMusicForItem(expandedItem)}
-          onClose={handleCloseExpanded}
-          initialMode={viewMode}
+          onClose={handleCloseAll}
+          mode={viewMode}
         />
       )}
     </section>
