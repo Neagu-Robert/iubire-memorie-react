@@ -28,7 +28,7 @@ const PhotoCollectionViewer: React.FC<PhotoCollectionViewerProps> = ({
   initialMode = 'selection'
 }) => {
   const [viewMode, setViewMode] = useState<'selection' | 'browse' | 'collage'>(
-    initialMode
+    initialMode === 'browse' || initialMode === 'collage' ? initialMode : 'selection'
   );
 
   const handleModeSelect = (mode: 'browse' | 'collage') => {
