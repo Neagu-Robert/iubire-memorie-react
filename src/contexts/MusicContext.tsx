@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 
 interface Song {
@@ -206,6 +205,8 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const playNextSong = () => {
     if (repeatMode === 'song') return; // Don't advance if repeating current song
     
+    const wasPlaying = isPlaying;
+    
     if (repeatMode === 'playlist') {
       setCurrentSongIndex((prev) => (prev + 1) % songs.length);
     } else {
@@ -214,17 +215,47 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setCurrentSongIndex(nextIndex);
       } else {
         setIsPlaying(false); // Stop at end if not repeating
+        return;
       }
+    }
+    
+    // Preserve playing state
+    if (wasPlaying) {
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch(console.error);
+        }
+      }, 100);
     }
   };
 
   const playPreviousSong = () => {
+    const wasPlaying = isPlaying;
     setCurrentSongIndex((prev) => (prev - 1 + songs.length) % songs.length);
+    
+    // Preserve playing state
+    if (wasPlaying) {
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch(console.error);
+        }
+      }, 100);
+    }
   };
 
   const shuffleSong = () => {
+    const wasPlaying = isPlaying;
     const randomIndex = Math.floor(Math.random() * songs.length);
     setCurrentSongIndex(randomIndex);
+    
+    // Preserve playing state
+    if (wasPlaying) {
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch(console.error);
+        }
+      }, 100);
+    }
   };
 
   const pauseMusic = () => {
@@ -303,9 +334,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           crossfadeToNextSong(currentSongIndex);
         } else {
           audioRef.current.src = songs[currentSongIndex].src;
-          if (wasPlaying) {
-            audioRef.current.play().catch(console.error);
-          }
+          // Don't auto-play here, let the button handlers manage playback
         }
       }
     }
