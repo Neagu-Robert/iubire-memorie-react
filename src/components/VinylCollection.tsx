@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { ChevronLeft, ChevronRight, X, Play, Pause, Shuffle, Volume2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Play, Pause, Shuffle, Volume2, Repeat } from 'lucide-react';
 import { useMusic } from '../contexts/MusicContext';
 import { Slider } from './ui/slider';
+import { Progress } from './ui/progress';
 import AnimatedPlaylist from './AnimatedPlaylist';
 
 interface VinylCollectionProps {
@@ -21,7 +22,12 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
     currentSongIndex,
     songs,
     volume,
-    setVolume
+    setVolume,
+    currentTime,
+    duration,
+    repeatMode,
+    setRepeatMode,
+    seekTo
   } = useMusic();
 
   const togglePlay = () => {
@@ -39,6 +45,28 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value[0] / 100);
+  };
+
+  const handleProgressChange = (value: number[]) => {
+    const newTime = (value[0] / 100) * duration;
+    seekTo(newTime);
+  };
+
+  const toggleRepeat = () => {
+    if (repeatMode === 'off') {
+      setRepeatMode('playlist');
+    } else if (repeatMode === 'playlist') {
+      setRepeatMode('song');
+    } else {
+      setRepeatMode('off');
+    }
+  };
+
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   if (!isOpen) return null;
@@ -61,60 +89,103 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
         </div>
 
         {/* Animated Playlist */}
-        <div className="px-6 pb-20 h-full">
+        <div className="px-6 pb-32 h-full">
           <AnimatedPlaylist />
         </div>
 
-        {/* Control buttons */}
-        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-6">
-          <button
-            onClick={togglePlay}
-            className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
-          >
-            {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-          </button>
-          
-          <button
-            onClick={shuffleSong}
-            className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
-          >
-            <Shuffle className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Navigation controls with volume */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-8">
-          <button
-            onClick={playPreviousSong}
-            className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          
-          <div className="text-center text-amber-100">
-            <p className="text-sm opacity-80">
-              {currentSongIndex + 1} of {songs.length}
-            </p>
+        {/* Bottom Control Container */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-900 via-amber-800 to-transparent p-6">
+          {/* Progress Bar Container */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-xs text-amber-200 w-10 text-right">
+                {formatTime(currentTime)}
+              </span>
+              <div className="flex-1">
+                <Slider
+                  value={[duration ? (currentTime / duration) * 100 : 0]}
+                  onValueChange={handleProgressChange}
+                  max={100}
+                  step={0.1}
+                  className="w-full cursor-pointer"
+                />
+              </div>
+              <span className="text-xs text-amber-200 w-10">
+                {formatTime(duration)}
+              </span>
+            </div>
           </div>
-          
-          <button
-            onClick={playNextSong}
-            className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
 
-          {/* Volume Control */}
-          <div className="flex items-center gap-2 ml-4">
-            <Volume2 className="w-5 h-5 text-amber-200" />
-            <div className="w-20">
-              <Slider
-                value={[volume * 100]}
-                onValueChange={handleVolumeChange}
-                max={100}
-                step={1}
-                className="w-full"
-              />
+          {/* Controls Container */}
+          <div className="flex items-center justify-center gap-4">
+            {/* Repeat Button */}
+            <div className="relative">
+              <button
+                onClick={toggleRepeat}
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg ${
+                  repeatMode !== 'off' ? 'bg-amber-600 hover:bg-amber-500' : 'bg-amber-700 hover:bg-amber-600'
+                }`}
+              >
+                <Repeat className="w-5 h-5" />
+              </button>
+              {repeatMode === 'song' && (
+                <div className="absolute -top-2 -right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">1</span>
+                </div>
+              )}
+            </div>
+
+            {/* Previous Button */}
+            <button
+              onClick={playPreviousSong}
+              className="w-10 h-10 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* Play/Pause Button */}
+            <button
+              onClick={togglePlay}
+              className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
+            >
+              {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+            </button>
+
+            {/* Next Button */}
+            <button
+              onClick={playNextSong}
+              className="w-10 h-10 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            {/* Shuffle Button */}
+            <button
+              onClick={shuffleSong}
+              className="w-10 h-10 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
+            >
+              <Shuffle className="w-5 h-5" />
+            </button>
+
+            {/* Volume Control */}
+            <div className="flex items-center gap-2 ml-4">
+              <Volume2 className="w-5 h-5 text-amber-200" />
+              <div className="w-20">
+                <Slider
+                  value={[volume * 100]}
+                  onValueChange={handleVolumeChange}
+                  max={100}
+                  step={1}
+                  className="w-full [&_[role=slider]]:bg-white [&_[role=slider]]:border-white"
+                />
+              </div>
+            </div>
+
+            {/* Song Counter */}
+            <div className="text-center text-amber-100 ml-4">
+              <p className="text-sm opacity-80">
+                {currentSongIndex + 1} of {songs.length}
+              </p>
             </div>
           </div>
         </div>

@@ -15,16 +15,22 @@ interface MusicContextType {
   isPlaying: boolean;
   isVinylCollectionOpen: boolean;
   volume: number;
+  currentTime: number;
+  duration: number;
+  repeatMode: 'off' | 'playlist' | 'song';
   audioRef: React.RefObject<HTMLAudioElement>;
   setCurrentSongIndex: (index: number) => void;
   setIsPlaying: (playing: boolean) => void;
   setIsVinylCollectionOpen: (open: boolean) => void;
   setVolume: (volume: number) => void;
+  setCurrentTime: (time: number) => void;
+  setRepeatMode: (mode: 'off' | 'playlist' | 'song') => void;
   playNextSong: () => void;
   playPreviousSong: () => void;
   shuffleSong: () => void;
   pauseMusic: () => void;
   resumeMusic: () => void;
+  seekTo: (time: number) => void;
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
@@ -191,10 +197,25 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isPlaying, setIsPlaying] = useState(false);
   const [isVinylCollectionOpen, setIsVinylCollectionOpen] = useState(false);
   const [volume, setVolume] = useState(0.7);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [repeatMode, setRepeatMode] = useState<'off' | 'playlist' | 'song'>('off');
   const audioRef = useRef<HTMLAudioElement>(null);
+  const crossfadeRef = useRef<HTMLAudioElement>(null);
 
   const playNextSong = () => {
-    setCurrentSongIndex((prev) => (prev + 1) % songs.length);
+    if (repeatMode === 'song') return; // Don't advance if repeating current song
+    
+    if (repeatMode === 'playlist') {
+      setCurrentSongIndex((prev) => (prev + 1) % songs.length);
+    } else {
+      const nextIndex = currentSongIndex + 1;
+      if (nextIndex < songs.length) {
+        setCurrentSongIndex(nextIndex);
+      } else {
+        setIsPlaying(false); // Stop at end if not repeating
+      }
+    }
   };
 
   const playPreviousSong = () => {
@@ -220,17 +241,71 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Handle song changes
+  const seekTo = (time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  // Crossfade transition between songs
+  const crossfadeToNextSong = (nextIndex: number) => {
+    if (!audioRef.current || !crossfadeRef.current) return;
+    
+    const currentAudio = audioRef.current;
+    const nextAudio = crossfadeRef.current;
+    
+    // Setup next song
+    nextAudio.src = songs[nextIndex].src;
+    nextAudio.volume = 0;
+    nextAudio.currentTime = 0;
+    
+    // Start crossfade
+    nextAudio.play().catch(console.error);
+    
+    const fadeTime = 1000; // 1 second crossfade
+    const steps = 20;
+    const stepTime = fadeTime / steps;
+    let step = 0;
+    
+    const crossfadeInterval = setInterval(() => {
+      step++;
+      const progress = step / steps;
+      
+      currentAudio.volume = volume * (1 - progress);
+      nextAudio.volume = volume * progress;
+      
+      if (step >= steps) {
+        clearInterval(crossfadeInterval);
+        currentAudio.pause();
+        
+        // Swap audio elements
+        const tempSrc = currentAudio.src;
+        const tempTime = currentAudio.currentTime;
+        
+        currentAudio.src = nextAudio.src;
+        currentAudio.currentTime = nextAudio.currentTime;
+        currentAudio.volume = volume;
+        
+        nextAudio.pause();
+        nextAudio.volume = 0;
+      }
+    }, stepTime);
+  };
+
+  // Handle song changes with crossfade
   useEffect(() => {
     if (audioRef.current && songs[currentSongIndex]) {
       const wasPlaying = isPlaying;
-      const currentTime = audioRef.current.currentTime;
       
-      // Only change src if it's a different song
       if (audioRef.current.src !== songs[currentSongIndex].src) {
-        audioRef.current.src = songs[currentSongIndex].src;
-        if (wasPlaying) {
-          audioRef.current.play().catch(console.error);
+        if (wasPlaying && crossfadeRef.current) {
+          crossfadeToNextSong(currentSongIndex);
+        } else {
+          audioRef.current.src = songs[currentSongIndex].src;
+          if (wasPlaying) {
+            audioRef.current.play().catch(console.error);
+          }
         }
       }
     }
@@ -243,28 +318,62 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [volume]);
 
+  // Handle audio events
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+    const handleEnded = () => {
+      if (repeatMode === 'song') {
+        audio.currentTime = 0;
+        audio.play().catch(console.error);
+      } else {
+        playNextSong();
+      }
+    };
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, [repeatMode]);
+
   const value = {
     songs,
     currentSongIndex,
     isPlaying,
     isVinylCollectionOpen,
     volume,
+    currentTime,
+    duration,
+    repeatMode,
     audioRef,
     setCurrentSongIndex,
     setIsPlaying,
     setIsVinylCollectionOpen,
     setVolume,
+    setCurrentTime,
+    setRepeatMode,
     playNextSong,
     playPreviousSong,
     shuffleSong,
     pauseMusic,
     resumeMusic,
+    seekTo,
   };
 
   return (
     <MusicContext.Provider value={value}>
       {children}
-      <audio ref={audioRef} loop={false} preload="auto" />
+      <audio ref={audioRef} preload="auto" />
+      <audio ref={crossfadeRef} preload="auto" />
     </MusicContext.Provider>
   );
 };
