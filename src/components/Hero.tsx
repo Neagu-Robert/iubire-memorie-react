@@ -36,7 +36,7 @@ const Hero = ({ onScrollDown }: { onScrollDown?: () => void }) => {
             <span>
               <span className="block mb-2">La mulți ani,</span>
               <span className="block bg-gradient-to-r from-pink-200 to-white bg-clip-text text-transparent">
-                Iubito! 💖
+                Alexa! 💖
               </span>
             </span>
             {/* Kiss Cat Animation */}
@@ -58,7 +58,7 @@ const Hero = ({ onScrollDown }: { onScrollDown?: () => void }) => {
             }`}
           >
             <p className="text-lg md:text-xl lg:text-2xl mb-12 max-w-2xl mx-auto leading-relaxed text-red-100">
-              Am creat un mic traseu cu amintirile noastre
+              Am pregătit ceva special pentru tine!
             </p>
           </div>
         </div>

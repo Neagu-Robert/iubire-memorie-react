@@ -41,11 +41,12 @@ const PreferatePersonalePage = () => {
 
         <div className="text-center mt-8">
           <h1 className="text-4xl font-bold text-white mb-4">
-            Preferate Personale
+            Câteva din preferatele noastre
           </h1>
           <p className="text-red-100 text-lg max-w-2xl mx-auto">
-            Colecția cu fotografiile noastre preferate. Trage stânga sau dreapta
-            pentru a naviga prin imagini.
+            Am ales câteva poze mai speciale care mi-au plăcut mai mult și știu
+            că și ție îți vor plăcea. Trage stânga sau dreapta pentru a naviga
+            prin imagini.
           </p>
         </div>
       </div>

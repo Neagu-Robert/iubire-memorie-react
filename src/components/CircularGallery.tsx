@@ -33,15 +33,15 @@ const events = categories.map((cat, idx) => {
     .reduce((acc, c) => acc + c.photos.length, 0);
   // Use default descriptions as before, based on index
   const defaultDescriptions = [
-    "Momentele noastre frumoase prin orașul drag",
+    "Momentele noastre frumoase prin oraș",
     "Pași liniștiți prin parcuri și străzi",
-    "Mișcare și energie împreună",
-    "Momente de bucurie și nostalgie",
-    "Cărți și povești împărtășite",
-    "Creativitate culinară în bucătărie",
-    "Distracție și râsete",
-    "Familie și prieteni alături",
-    "Cele mai prețioase momente împreună",
+    "Mișcare și voie bună",
+    "Niciodata prea mare pentru a te simți din nou copil",
+    "Hobby-ul nostru comun preferat",
+    "Mereu ceva nou de învățat și descoperit",
+    "Distracție, strategie și râsete",
+    "Alături de familie și prieteni",
+    "Oricănd, oriunde, mereu",
   ];
   return {
     title: cat.title,

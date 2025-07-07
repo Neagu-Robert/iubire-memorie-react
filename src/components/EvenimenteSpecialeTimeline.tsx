@@ -11,7 +11,7 @@ const evenimenteData = [
     id: 1,
     title: "Serbarea de Crăciun",
     description:
-      "Magia sărbătorilor de iarnă, când totul strălucește și inimile sunt pline de bucurie și recunoștință.",
+      "Am însuflat magia Sarbătorilor împreuna cu prietenii noștri printr-o șceneta frumoasă.",
     icon: "🎄",
     date: "Decembrie magic",
     color: "from-red-400 to-green-500",
@@ -19,8 +19,7 @@ const evenimenteData = [
   {
     id: 2,
     title: "Zile de naștere la Old Mill",
-    description:
-      "Serbări speciale în locul nostru preferat, unde fiecare an în plus este celebrat cu stil și eleganță.",
+    description: "Locul preferat de sărbătorit al colegilor noștri.",
     icon: "🍕",
     date: "Aniversări elegante",
     color: "from-amber-400 to-orange-500",
@@ -65,7 +64,7 @@ const evenimenteData = [
     id: 7,
     title: "Ziua îndrăgostiților",
     description:
-      "Sărbătoarea dragostei când inimile bat la unison și fiecare gest devine o declarație de iubire.",
+      "Sărbătoarea dragostei, am redescoperit pasiunea de a dansa împreună și am creat amintiri de neuitat.",
     icon: "💝",
     date: "14 Februarie",
     color: "from-pink-500 to-red-400",
