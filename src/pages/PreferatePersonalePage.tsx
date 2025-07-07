@@ -2,57 +2,21 @@ import React, { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PhotoStack from "../components/PhotoStack";
+import { preferatePersonalePhotos } from "../data/preferatePersonalePhotos";
+import VintageMusicPlayer from "../components/VintageMusicPlayer";
+import VinylCollection from "../components/VinylCollection";
+import { useMusic } from "../contexts/MusicContext";
 
 const PreferatePersonalePage = () => {
   const navigate = useNavigate();
+  const { isVinylCollectionOpen, setIsVinylCollectionOpen } = useMusic();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Sample photos data - using blank placeholders
-  const photos = [
-    {
-      id: 1,
-      src: "",
-      alt: "Photo 1",
-    },
-    {
-      id: 2,
-      src: "",
-      alt: "Photo 2",
-    },
-    {
-      id: 3,
-      src: "",
-      alt: "Photo 3",
-    },
-    {
-      id: 4,
-      src: "",
-      alt: "Photo 4",
-    },
-    {
-      id: 5,
-      src: "",
-      alt: "Photo 5",
-    },
-    {
-      id: 6,
-      src: "",
-      alt: "Photo 6",
-    },
-    {
-      id: 7,
-      src: "",
-      alt: "Photo 7",
-    },
-    {
-      id: 8,
-      src: "",
-      alt: "Photo 8",
-    },
-  ];
+  // Use real photos from preferatePersonalePhotos
+  const photos = preferatePersonalePhotos;
 
   return (
     <div
@@ -88,6 +52,12 @@ const PreferatePersonalePage = () => {
 
       {/* Photo Stack */}
       <PhotoStack photos={photos} />
+      {/* Music Player */}
+      <VintageMusicPlayer onOpen={() => setIsVinylCollectionOpen(true)} />
+      <VinylCollection
+        isOpen={isVinylCollectionOpen}
+        onClose={() => setIsVinylCollectionOpen(false)}
+      />
     </div>
   );
 };

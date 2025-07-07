@@ -16,7 +16,7 @@ const Index = () => {
   const [foldersAnim, setFoldersAnim] = useState("");
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Use music context
   const { isVinylCollectionOpen, setIsVinylCollectionOpen } = useMusic();
 
@@ -39,7 +39,7 @@ const Index = () => {
     {
       id: 1,
       title: "Primele noastre",
-      description: "Colecția cu toate momentele noastre speciale",
+      description: "Primele noastre momente împreună",
       color: "from-purple-400 to-pink-500",
       route: "/timeline",
       position: "left" as const,
@@ -54,8 +54,8 @@ const Index = () => {
     },
     {
       id: 3,
-      title: "Galeria Circulară",
-      description: "83 de momente organizate în 9 evenimente speciale",
+      title: "Activități preferate",
+      description: "Am inclus câteva dintre activitățile noastre preferate",
       color: "from-green-400 to-emerald-500",
       route: "/circular-gallery",
       position: "center-right" as const,
@@ -63,7 +63,7 @@ const Index = () => {
     {
       id: 4,
       title: "Preferate personale",
-      description: "Colecția cu fotografiile noastre preferate",
+      description: "Aici sunt pozele cu noi doi care mi-au plăcut cel mai mult",
       color: "from-orange-400 to-red-500",
       route: "/preferate-personale",
       position: "right" as const,

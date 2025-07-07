@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { X, Play, Pause, RotateCcw } from "lucide-react";
 import { useMusic } from "../contexts/MusicContext";
@@ -27,17 +26,25 @@ const AnimatedCollage: React.FC<AnimatedCollageProps> = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Use global music context
   const globalMusic = useMusic();
+
+  // Sync collage audio volume with global volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = globalMusic.volume;
+    }
+  }, [globalMusic.volume]);
 
   useEffect(() => {
     // Auto-start music when component loads (only if musicSrc exists)
     if (audioRef.current && musicSrc) {
       // Pause global music when collage starts
       globalMusic.pauseMusic();
-      
-      audioRef.current.volume = 0.7;
+
+      // Use global volume instead of hardcoded 0.7
+      audioRef.current.volume = globalMusic.volume;
       audioRef.current
         .play()
         .then(() => {

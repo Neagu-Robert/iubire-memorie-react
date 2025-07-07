@@ -163,3 +163,11 @@
   animation: swing-out-bottom-bck 0.55s cubic-bezier(0.6, -0.28, 0.735, 0.045)
     both;
 }
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Shows whole image, may leave bars */
+  background: #222; /* Or a gradient, or blurred version of the image */
+  border-radius: 12px;
+}

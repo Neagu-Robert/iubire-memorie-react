@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import TimelineItem from "./TimelineItem";
 import ModeSelector from "./ModeSelector";
 import PhotoCollectionViewer from "./PhotoCollectionViewer";
+import { getTimelinePhotos } from "../data/getTimelinePhotos";
 
 const timelineData = [
   {
@@ -19,7 +20,7 @@ const timelineData = [
     id: 2,
     title: "Prima vizită la tine acasă",
     description:
-      "Momentul când am pășit pentru prima dată în spațiul tău personal și am simțit că sunt acasă.",
+      "Momentul când am pășit pentru prima dată în spațiul tău personal.",
     icon: "🏡",
     date: "Căminul tău",
     color: "from-green-400 to-emerald-500",
@@ -64,7 +65,7 @@ const timelineData = [
     id: 7,
     title: "Prima ieșire la râu",
     description:
-      "Apa care curge liniștită, ca și timpul nostru împreună - natural și reconfortant.",
+      "Un pic de mișcare cu bicicleta și rolele, pe urmă o plimbare relaxantă cu barcuța pe râu",
     icon: "🏞️",
     date: "La malul apei",
     color: "from-blue-400 to-teal-500",
@@ -73,7 +74,7 @@ const timelineData = [
     id: 8,
     title: "Primul concert filarmonic",
     description:
-      "Muzica clasică care ne-a învoltat sufletele și ne-a unit în armonie perfectă.",
+      "Pentru mine chiar a fost primul concert filarmonic, aș mai merge.",
     icon: "🎼",
     date: "Seara muzicală",
     color: "from-purple-400 to-indigo-500",
@@ -82,7 +83,7 @@ const timelineData = [
     id: 9,
     title: "Primul festival medieval",
     description:
-      "Călătorie în timp și povești de demult - ca și dragostea noastră, unele lucruri sunt eterne.",
+      "Călătorie în timp și povești de demult, ne simțeam ca într-o poveste.",
     icon: "🏰",
     date: "În vremuri de demult",
     color: "from-amber-400 to-orange-500",
@@ -91,7 +92,7 @@ const timelineData = [
     id: 10,
     title: "Prima sesiune serioasă de Catan",
     description:
-      "Strategii, negocieri și râsete - am descoperit că și în joc suntem o echipă de nezbiruit.",
+      "Strategii, negocieri și râsete - am descoperit că putem face o echipa buna:)",
     icon: "🎲",
     date: "Seara jocurilor",
     color: "from-yellow-400 to-amber-500",
@@ -99,8 +100,7 @@ const timelineData = [
   {
     id: 11,
     title: "Prima ieșire cu cortul",
-    description:
-      "Sub cerul plin de stele, doar noi doi și natura - simplitatea care face viața frumoasă.",
+    description: "Sub cerul plin de stele, doar noi doi și natura.",
     icon: "⛺",
     date: "Sub stele",
     color: "from-green-500 to-teal-500",
@@ -108,8 +108,7 @@ const timelineData = [
   {
     id: 12,
     title: "Prima nuntă/eveniment special",
-    description:
-      "Dansul nostru și zâmbetele complice - o previzualizare a viitorului nostru împreună.",
+    description: "Am simțit ca mă integrez încet încet în familia ta",
     icon: "💒",
     date: "Sărbătoarea dragostei",
     color: "from-pink-400 to-rose-500",
@@ -127,7 +126,7 @@ const timelineData = [
     id: 14,
     title: "Prima cabană la munte împreună",
     description:
-      "Refugiul nostru din lume, unde timpul se oprește și doar noi doi contăm.",
+      "A fost rândul tau să te integrezi în familia mea. Eu am încercat patinatul iar tu skiatul.",
     icon: "🏔️",
     date: "Refugiul nostru",
     color: "from-indigo-400 to-purple-500",
@@ -136,7 +135,7 @@ const timelineData = [
     id: 15,
     title: "Prima oară la buneii tăi",
     description:
-      "Momentul când am devenit parte din familia ta - căldura unui nou început și a apartenenței.",
+      "Am simțit un pic din trecutul tău, văzând unde ai crescut am început să te cunosc și mai bine.",
     icon: "👴👵",
     date: "În familie",
     color: "from-violet-400 to-pink-500",
@@ -193,12 +192,16 @@ const Timeline = () => {
     return timelineData.find((item) => item.id === expandedItem);
   };
 
+  const timelinePhotos = getTimelinePhotos();
+
   const getPhotosForItem = (itemId: number) => {
-    // Placeholder photos - you can replace with actual photo data
-    return [1, 2, 3, 4, 5, 6].map((num) => ({
-      id: num,
-      src: `https://picsum.photos/800/600?random=${itemId}${num}`, // Using placeholder images
-      alt: `Fotografie ${num} din ${getCurrentItem()?.title || "colecție"}`,
+    // Find the corresponding photos for the timeline item
+    const milestone = timelinePhotos[itemId - 1];
+    if (!milestone) return [];
+    return milestone.photos.map((src, idx) => ({
+      id: idx + 1,
+      src,
+      alt: `Fotografie ${idx + 1} din ${milestone.title}`,
     }));
   };
 

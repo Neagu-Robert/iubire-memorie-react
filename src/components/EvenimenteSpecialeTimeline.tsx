@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import TimelineItem from "./TimelineItem";
 import ModeSelector from "./ModeSelector";
 import PhotoCollectionViewer from "./PhotoCollectionViewer";
+import { getEvenimenteSpecialePhotos } from "../data/getEvenimenteSpecialePhotos";
 
 const evenimenteData = [
   {
@@ -72,12 +72,14 @@ const evenimenteData = [
   },
 ];
 
+const evenimentePhotos = getEvenimenteSpecialePhotos();
+
 const EvenimenteSpecialeTimeline = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
   const [showModeSelector, setShowModeSelector] = useState(false);
   const [showPhotoViewer, setShowPhotoViewer] = useState(false);
-  const [viewMode, setViewMode] = useState<'browse' | 'collage'>('browse');
+  const [viewMode, setViewMode] = useState<"browse" | "collage">("browse");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -99,16 +101,21 @@ const EvenimenteSpecialeTimeline = () => {
     return () => observer.disconnect();
   }, []);
 
-  const handleItemExpand = (id: number, mode: 'browse' | 'collage') => {
-    console.log('EvenimenteSpeciale: handleItemExpand called with id:', id, 'mode:', mode);
+  const handleItemExpand = (id: number, mode: "browse" | "collage") => {
+    console.log(
+      "EvenimenteSpeciale: handleItemExpand called with id:",
+      id,
+      "mode:",
+      mode
+    );
     setExpandedItem(id);
     setViewMode(mode);
     setShowPhotoViewer(true);
     setShowModeSelector(false);
   };
 
-  const handleModeSelect = (mode: 'browse' | 'collage') => {
-    console.log('EvenimenteSpeciale: handleModeSelect called with mode:', mode);
+  const handleModeSelect = (mode: "browse" | "collage") => {
+    console.log("EvenimenteSpeciale: handleModeSelect called with mode:", mode);
     setViewMode(mode);
     setShowModeSelector(false);
     setShowPhotoViewer(true);
@@ -125,30 +132,32 @@ const EvenimenteSpecialeTimeline = () => {
   };
 
   const getCurrentItem = () => {
-    return evenimenteData.find(item => item.id === expandedItem);
+    return evenimenteData.find((item) => item.id === expandedItem);
   };
 
   const getPhotosForItem = (itemId: number) => {
-    // Placeholder photos - you can replace with actual photo data
-    return [1, 2, 3, 4, 5, 6].map(num => ({
-      id: num,
-      src: `/photos/special-events/item-${itemId}/photo-${num}.jpg`,
-      alt: `Fotografie ${num} din ${getCurrentItem()?.title || 'colecție'}`
+    // Find the corresponding photos for the event item
+    const event = evenimentePhotos[itemId - 1];
+    if (!event) return [];
+    return event.photos.map((src, idx) => ({
+      id: idx + 1,
+      src,
+      alt: `Fotografie ${idx + 1} din ${event.title}`,
     }));
   };
 
   const getMusicForItem = (itemId: number) => {
     // Map each special event item to its corresponding music file according to the specific order
     const musicMap: { [key: number]: string } = {
-      1: '/songs/special_events/Andy Williams - It\'s the Most Wonderful Time of the Year (Official Audio).mp3', // Serbare craciun
-      2: '/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3', // Old mill
-      3: '/songs/special_events/Major Lazer & DJ Snake - Lean On (feat. MØ) [Official Lyric Video].mp3', // familie
-      4: '/songs/special_events/Fly Project - Toca Toca  Official Music Video.mp3', // majorat
-      5: '/songs/special_events/Rihanna - We Found Love (Lyrics) ft. Calvin Harris.mp3', // absolviri
+      1: "/songs/special_events/Andy Williams - It's the Most Wonderful Time of the Year (Official Audio).mp3", // Serbare craciun
+      2: "/songs/special_events/Akcent - Dragoste de inchiriat (Official Video).mp3", // Old mill
+      3: "/songs/special_events/Major Lazer & DJ Snake - Lean On (feat. MØ) [Official Lyric Video].mp3", // familie
+      4: "/songs/special_events/Fly Project - Toca Toca  Official Music Video.mp3", // majorat
+      5: "/songs/special_events/Rihanna - We Found Love (Lyrics) ft. Calvin Harris.mp3", // absolviri
       // 6: iesiri dragi - no song (exception)
-      7: '/songs/special_events/Felix Jaehn - Ain\'t Nobody (Loves Me Better) (Official Video) ft. Jasmine Thompson.mp3' // ziua indragostitilor
+      7: "/songs/special_events/Felix Jaehn - Ain't Nobody (Loves Me Better) (Official Video) ft. Jasmine Thompson.mp3", // ziua indragostitilor
     };
-    
+
     return musicMap[itemId]; // Return undefined for items without songs
   };
 
@@ -215,8 +224,8 @@ const EvenimenteSpecialeTimeline = () => {
       {/* Mode Selector */}
       {showModeSelector && expandedItem && (
         <ModeSelector
-          title={getCurrentItem()?.title || ''}
-          description={getCurrentItem()?.description || ''}
+          title={getCurrentItem()?.title || ""}
+          description={getCurrentItem()?.description || ""}
           hasMusic={hasMusic(expandedItem)}
           onModeSelect={handleModeSelect}
           onClose={handleCloseAll}
@@ -227,8 +236,8 @@ const EvenimenteSpecialeTimeline = () => {
       {showPhotoViewer && expandedItem && (
         <PhotoCollectionViewer
           photos={getPhotosForItem(expandedItem)}
-          title={getCurrentItem()?.title || ''}
-          description={getCurrentItem()?.description || ''}
+          title={getCurrentItem()?.title || ""}
+          description={getCurrentItem()?.description || ""}
           musicSrc={getMusicForItem(expandedItem)}
           onClose={handleCloseAll}
           mode={viewMode}

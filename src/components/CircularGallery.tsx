@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { getActivitatiPreferatePhotos } from "../data/getActivitatiPreferatePhotos";
 
 interface Event {
   title: string;
@@ -10,62 +11,45 @@ interface Event {
   startIndex: number;
 }
 
-const events: Event[] = [
-  {
-    title: "Ieșiri romantice în oraș",
-    description: "Momentele noastre frumoase prin orașul drag",
-    imageCount: 16,
-    startIndex: 0,
-  },
-  {
-    title: "Plimbări relaxante",
-    description: "Pași liniștiți prin parcuri și străzi",
-    imageCount: 22,
-    startIndex: 16,
-  },
-  {
-    title: "Activități sportive",
-    description: "Mișcare și energie împreună",
-    imageCount: 4,
-    startIndex: 38,
-  },
-  {
-    title: "Datul pe leagăn",
-    description: "Momente de bucurie și nostalgie",
-    imageCount: 15,
-    startIndex: 42,
-  },
-  {
-    title: "Cititul",
-    description: "Cărți și povești împărtășite",
-    imageCount: 2,
-    startIndex: 57,
-  },
-  {
-    title: "Sesiuni de gătit",
-    description: "Creativitate culinară în bucătărie",
-    imageCount: 7,
-    startIndex: 59,
-  },
-  {
-    title: "Jocurile",
-    description: "Distracție și râsete",
-    imageCount: 4,
-    startIndex: 66,
-  },
-  {
-    title: "Petrecut timp cu cei dragi",
-    description: "Familie și prieteni alături",
-    imageCount: 10,
-    startIndex: 70,
-  },
-  {
-    title: "Preferatul meu: petrecut timp cu tine oricând, oriunde am fi",
-    description: "Cele mai prețioase momente împreună",
-    imageCount: 3,
-    startIndex: 80,
-  },
-];
+// Fetch categories and photos data
+const categories = getActivitatiPreferatePhotos();
+
+// Flatten all photos into a single array, keeping track of their category and index
+const images = categories.flatMap((cat, catIdx) =>
+  cat.photos.map((src, idx) => ({
+    id: `${catIdx + 1}-${idx + 1}`,
+    src,
+    alt: `Fotografie ${idx + 1} din ${cat.title}`,
+    category: cat.title,
+    categoryIndex: catIdx,
+    photoIndex: idx,
+  }))
+);
+
+// Build events array for navigation and event info
+const events = categories.map((cat, idx) => {
+  const startIndex = categories
+    .slice(0, idx)
+    .reduce((acc, c) => acc + c.photos.length, 0);
+  // Use default descriptions as before, based on index
+  const defaultDescriptions = [
+    "Momentele noastre frumoase prin orașul drag",
+    "Pași liniștiți prin parcuri și străzi",
+    "Mișcare și energie împreună",
+    "Momente de bucurie și nostalgie",
+    "Cărți și povești împărtășite",
+    "Creativitate culinară în bucătărie",
+    "Distracție și râsete",
+    "Familie și prieteni alături",
+    "Cele mai prețioase momente împreună",
+  ];
+  return {
+    title: cat.title,
+    description: defaultDescriptions[idx] || "",
+    imageCount: cat.photos.length,
+    startIndex,
+  };
+});
 
 const CircularGallery = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -76,15 +60,6 @@ const CircularGallery = () => {
   const navigate = useNavigate();
   const [isPeekCatHovered, setIsPeekCatHovered] = useState(false);
   const peekCatRef = useRef<HTMLVideoElement>(null);
-
-  // Generate placeholder images array (83 total)
-  const images = Array.from({ length: 83 }, (_, i) => ({
-    id: i + 1,
-    src: `https://images.unsplash.com/photo-${
-      1500000000000 + i * 1000000
-    }?w=300&h=400&fit=crop`,
-    alt: `Image ${i + 1}`,
-  }));
 
   // Calculate which event we're currently in
   useEffect(() => {

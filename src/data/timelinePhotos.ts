@@ -1,0 +1,17 @@
+export const timelineMilestones = [
+  { title: "Prima excursie", folder: "prima_excursie" },
+  { title: "Prima vizită", folder: "prima_vizita" },
+  { title: "Primul festival de Crăciun", folder: "primul_festival_craciun" },
+  { title: "Prima oară la piscină", folder: "prima_oara_piscina" },
+  { title: "Prima excursie la munte", folder: "prima_excursie_munte" },
+  { title: "Prima sesiune de gătit", folder: "prima_ses_gatit" },
+  { title: "Prima ieșire la râu", folder: "prima_iesire_rau" },
+  { title: "Primul Filarmonica", folder: "primul_filarmonica" },
+  { title: "Primul festival medieval", folder: "primul_festival_medieval" },
+  { title: "Prima Catan", folder: "prima_catan" },
+  { title: "Prima cort", folder: "prima_cort" },
+  { title: "Prima nuntă", folder: "prima_nunta" },
+  { title: "Primul Crăciun", folder: "primul_craciun" },
+  { title: "Prima cabană la munte", folder: "prima_cabana_munte" },
+  { title: "Prima la bunici", folder: "prima_bunici" },
+];

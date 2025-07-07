@@ -1,22 +1,33 @@
-
-import React from 'react';
-import { ChevronLeft, ChevronRight, X, Play, Pause, Shuffle, Volume2, Repeat } from 'lucide-react';
-import { useMusic } from '../contexts/MusicContext';
-import { Slider } from './ui/slider';
-import { Progress } from './ui/progress';
-import AnimatedPlaylist from './AnimatedPlaylist';
+import React from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Play,
+  Pause,
+  Shuffle,
+  Volume2,
+  Repeat,
+} from "lucide-react";
+import { useMusic } from "../contexts/MusicContext";
+import { Slider } from "./ui/slider";
+import { Progress } from "./ui/progress";
+import AnimatedPlaylist from "./AnimatedPlaylist";
 
 interface VinylCollectionProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) => {
-  const { 
-    isPlaying, 
-    setIsPlaying, 
-    playNextSong, 
-    playPreviousSong, 
+const VinylCollection: React.FC<VinylCollectionProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  const {
+    isPlaying,
+    setIsPlaying,
+    playNextSong,
+    playPreviousSong,
     shuffleSong,
     audioRef,
     currentSongIndex,
@@ -27,7 +38,7 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
     duration,
     repeatMode,
     setRepeatMode,
-    seekTo
+    seekTo,
   } = useMusic();
 
   const togglePlay = () => {
@@ -36,9 +47,18 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(console.error);
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error("Failed to play:", error);
+            // If autoplay was blocked, try to resume with user interaction
+            if (error.name === "NotAllowedError") {
+              console.log("Autoplay blocked, user interaction required");
+            }
+          });
       }
     }
   };
@@ -53,20 +73,20 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
   };
 
   const toggleRepeat = () => {
-    if (repeatMode === 'off') {
-      setRepeatMode('playlist');
-    } else if (repeatMode === 'playlist') {
-      setRepeatMode('song');
+    if (repeatMode === "off") {
+      setRepeatMode("playlist");
+    } else if (repeatMode === "playlist") {
+      setRepeatMode("song");
     } else {
-      setRepeatMode('off');
+      setRepeatMode("off");
     }
   };
 
   const formatTime = (time: number) => {
-    if (isNaN(time)) return '0:00';
+    if (isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   if (!isOpen) return null;
@@ -84,7 +104,9 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
 
         {/* Header */}
         <div className="relative z-10 p-6 text-center">
-          <h2 className="text-3xl font-bold text-amber-100 mb-2">Music Player</h2>
+          <h2 className="text-3xl font-bold text-amber-100 mb-2">
+            Music Player
+          </h2>
           <p className="text-amber-200">Your romantic soundtrack collection</p>
         </div>
 
@@ -123,12 +145,14 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
               <button
                 onClick={toggleRepeat}
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg ${
-                  repeatMode !== 'off' ? 'bg-amber-600 hover:bg-amber-500' : 'bg-amber-700 hover:bg-amber-600'
+                  repeatMode !== "off"
+                    ? "bg-amber-600 hover:bg-amber-500"
+                    : "bg-amber-700 hover:bg-amber-600"
                 }`}
               >
                 <Repeat className="w-5 h-5" />
               </button>
-              {repeatMode === 'song' && (
+              {repeatMode === "song" && (
                 <div className="absolute -top-2 -right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center">
                   <span className="text-xs font-bold text-white">1</span>
                 </div>
@@ -148,7 +172,11 @@ const VinylCollection: React.FC<VinylCollectionProps> = ({ isOpen, onClose }) =>
               onClick={togglePlay}
               className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
             >
-              {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+              {isPlaying ? (
+                <Pause className="w-6 h-6" />
+              ) : (
+                <Play className="w-6 h-6" />
+              )}
             </button>
 
             {/* Next Button */}

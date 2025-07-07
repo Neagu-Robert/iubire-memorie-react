@@ -1,16 +1,16 @@
-
-import React from 'react';
-import { Play, Pause, Music, Volume2 } from 'lucide-react';
-import { useMusic } from '../contexts/MusicContext';
+import React from "react";
+import { Play, Pause, Music, Volume2 } from "lucide-react";
+import { useMusic } from "../contexts/MusicContext";
 
 const AnimatedPlaylist: React.FC = () => {
-  const { 
-    songs, 
-    currentSongIndex, 
-    isPlaying, 
-    setCurrentSongIndex, 
+  const {
+    songs,
+    currentSongIndex,
+    isPlaying,
+    setCurrentSongIndex,
     setIsPlaying,
-    audioRef 
+    setShouldAutoPlay,
+    audioRef,
   } = useMusic();
 
   const togglePlayPause = () => {
@@ -19,17 +19,28 @@ const AnimatedPlaylist: React.FC = () => {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(console.error);
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error("Failed to play:", error);
+            // If autoplay was blocked, try to resume with user interaction
+            if (error.name === "NotAllowedError") {
+              console.log("Autoplay blocked, user interaction required");
+            }
+          });
       }
     }
   };
 
   const selectSong = (index: number) => {
+    const wasPlaying = isPlaying;
     setCurrentSongIndex(index);
-    if (isPlaying) {
-      setIsPlaying(true);
+    // If it was playing, we want to continue playing the new song
+    if (wasPlaying) {
+      setShouldAutoPlay(true);
     }
   };
 
@@ -39,19 +50,33 @@ const AnimatedPlaylist: React.FC = () => {
       <div className="bg-gradient-to-r from-amber-800 to-amber-900 p-6 rounded-t-2xl border-b border-amber-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className={`w-16 h-16 bg-gradient-to-br ${songs[currentSongIndex]?.color} rounded-full flex items-center justify-center shadow-lg ${isPlaying ? 'animate-pulse' : ''}`}>
+            <div
+              className={`w-16 h-16 bg-gradient-to-br ${
+                songs[currentSongIndex]?.color
+              } rounded-full flex items-center justify-center shadow-lg ${
+                isPlaying ? "animate-pulse" : ""
+              }`}
+            >
               <Music className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-amber-100">{songs[currentSongIndex]?.title}</h3>
-              <p className="text-amber-200">{songs[currentSongIndex]?.artist}</p>
+              <h3 className="text-xl font-bold text-amber-100">
+                {songs[currentSongIndex]?.title}
+              </h3>
+              <p className="text-amber-200">
+                {songs[currentSongIndex]?.artist}
+              </p>
             </div>
           </div>
           <button
             onClick={togglePlayPause}
             className="w-14 h-14 bg-amber-700 hover:bg-amber-600 rounded-full flex items-center justify-center text-white transition-colors duration-200 shadow-lg"
           >
-            {isPlaying ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7" />}
+            {isPlaying ? (
+              <Pause className="w-7 h-7" />
+            ) : (
+              <Play className="w-7 h-7" />
+            )}
           </button>
         </div>
       </div>
@@ -70,25 +95,39 @@ const AnimatedPlaylist: React.FC = () => {
                 onClick={() => selectSong(index)}
                 className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
                   index === currentSongIndex
-                    ? 'bg-amber-700 border-2 border-amber-500 shadow-lg transform scale-105'
-                    : 'bg-amber-800/50 hover:bg-amber-700/70 border border-transparent'
+                    ? "bg-amber-700 border-2 border-amber-500 shadow-lg transform scale-105"
+                    : "bg-amber-800/50 hover:bg-amber-700/70 border border-transparent"
                 }`}
               >
                 <div className="flex items-center space-x-3">
-                  <div className={`w-10 h-10 bg-gradient-to-br ${song.color} rounded-full flex items-center justify-center flex-shrink-0 ${
-                    index === currentSongIndex && isPlaying ? 'animate-spin' : ''
-                  }`}>
+                  <div
+                    className={`w-10 h-10 bg-gradient-to-br ${
+                      song.color
+                    } rounded-full flex items-center justify-center flex-shrink-0 ${
+                      index === currentSongIndex && isPlaying
+                        ? "animate-spin"
+                        : ""
+                    }`}
+                  >
                     <Music className="w-4 h-4 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium truncate ${
-                      index === currentSongIndex ? 'text-amber-100' : 'text-amber-200'
-                    }`}>
+                    <p
+                      className={`font-medium truncate ${
+                        index === currentSongIndex
+                          ? "text-amber-100"
+                          : "text-amber-200"
+                      }`}
+                    >
                       {song.title}
                     </p>
-                    <p className={`text-sm truncate ${
-                      index === currentSongIndex ? 'text-amber-200' : 'text-amber-300'
-                    }`}>
+                    <p
+                      className={`text-sm truncate ${
+                        index === currentSongIndex
+                          ? "text-amber-200"
+                          : "text-amber-300"
+                      }`}
+                    >
                       {song.artist}
                     </p>
                   </div>
